@@ -2,13 +2,18 @@
  * Created by Antonio on 23/04/2017.
  */
 $(document).ready(function () {
-
+    var url = "";
+    if(window.location.host=="localhost"){
+        url = window.location.protocol+'//'+window.location.host+'/'+window.location.pathname.split('/')[1];
+    }else{
+        url = "http://printcolor.antonioextremera.com";
+    }
     $('[data-toggle="tooltip"]').tooltip();
 
     $('#savePrice').on('click', function () {
         if (checkNewPrice() == 3) {
             $.ajax({
-                    url: 'http://localhost/printcolor/admin/producto/addNewPrice',
+                    url: url+'/admin/producto/addNewPrice',
                     dataType: 'JSON',
                     method: 'post',
                     data: {
@@ -40,11 +45,11 @@ $(document).ready(function () {
     $('#saveType').on('click', function () {
         if (checkNameTypePriceProduct()) {
             $.ajax({
-                    url: 'http://localhost/printcolor/admin/producto/addNewTypePriceProduct',
+                    url: url+'/admin/producto/addNewTypePriceProduct',
                     dataType: 'JSON',
                     method: 'post',
                     data: {
-                        idProduct: location.pathname.split('/')[4],
+                        idProduct: location.pathname.split('/')[5],
                         nameTypePrice: $('#nameTypePriceProduct').val(),
                     },
                     headers: {
@@ -70,7 +75,7 @@ $(document).ready(function () {
     /* actualizar precio */
     $('#updatePrice').on('click', function () {
             $.ajax({
-                    url: 'http://localhost/printcolor/admin/producto/editPriceProduct',
+                    url: url+'/admin/producto/editPriceProduct',
                     dataType: 'JSON',
                     method: 'post',
                     data: {
@@ -102,7 +107,7 @@ $(document).ready(function () {
     /* eliminar precio */
     $('#confirmDeletePrice').on('click', function () {
                     $.ajax({
-                    url: 'http://localhost/printcolor/admin/producto/deletePrice',
+                    url: url+'/admin/producto/deletePrice',
                     dataType: 'JSON',
                     method: 'post',
                     data: {
@@ -158,7 +163,7 @@ $(document).ready(function () {
 //actualizar el nombre del acabado
     $('#saveNameTypePriceProduct').on('click',function(){
         $.ajax({
-                url: 'http://localhost/printcolor/admin/producto/editNameTypePriceProduct',
+                url: url+'/admin/producto/editNameTypePriceProduct',
                 dataType: 'JSON',
                 method: 'post',
                 data: {
@@ -195,7 +200,7 @@ $(document).ready(function () {
 
     $('#confirmDeletetypePriceProduct').on('click',function(){
         $.ajax({
-                url: 'http://localhost/printcolor/admin/producto/deleteTypePriceProduct',
+                url: url+'/admin/producto/deleteTypePriceProduct',
                 dataType: 'JSON',
                 method: 'post',
                 data: {

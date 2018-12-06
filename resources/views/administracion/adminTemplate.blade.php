@@ -10,7 +10,14 @@
     <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('js/app.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('js/js.js') !!}"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
 </head>
 <body>
 <div class="container">
@@ -24,11 +31,20 @@
                 <h3>Impresi&oacute;n r&aacute;pida<br/>
                     y<br/>
                     Segura</h3>
-                <img src="{{asset('img/icons_social/twitter.png')}}" width="40px" height="40px"/>
-                <img src="{{asset('img/icons_social/instagram.jpg')}}" class="img-circle" width="40px" height="40px"/>
-                <img src="{{asset('img/icons_social/facebook.png')}}" width="40px" height="40px"/>
-                <img src="{{asset('img/icons_social/pinterest.png')}}" width="40px" height="40px"/>
-                <img src="{{asset('img/icons_social/googleplus.png')}}" width="40px" height="40px"/>
+                <a href="https://www.twitter.com/{!! HelperConfig::getConfig('_LINK_TWITTER') !!}" target="_blank"><img
+                            src="{{asset('img/icons_social/twitter.png')}}" width="40px" height="40px"/></a>
+                <a href="https://www.instagram.com/{!! HelperConfig::getConfig('_LINK_INSTAGRAM') !!}"
+                   target="_blank"><img
+                            src="{{asset('img/icons_social/instagram.jpg')}}" class="img-circle" width="40px"
+                            height="40px"/></a>
+                <a href="https://www.facebook.com/{!! HelperConfig::getConfig('_LINK_FACEBOOK') !!}"
+                   target="_blank"><img
+                            src="{{asset('img/icons_social/facebook.png')}}" width="40px" height="40px"/></a>
+                <a href="https://www.pinterest.es/{!! HelperConfig::getConfig('_LINK_PINTEREST') !!}"
+                   target="_blank"><img
+                            src="{{asset('img/icons_social/pinterest.png')}}" width="40px" height="40px"/></a>
+                <a href="https://plus.google.com/{!! HelperConfig::getConfig('_LINK_GOOGLE+') !!}" target="_blank"><img
+                            src="{{asset('img/icons_social/googleplus.png')}}" width="40px" height="40px"/></a>
                 <br/>
                 <br/>
             </div>
@@ -41,8 +57,13 @@
                     <a href="mailto:info@printcolorillora.com">info@printcolorillora.com</a></b><br/>
                 C/Olivo 4, &Iacute;llora (Granada)<br/>
                 Horario de L a V<br/>
-                Ma&ntilde;anas: 10:00 a 14:00 h.<br/>
-                Tardes: 16:30 a 20:00 h.<br/>
+                @if(date('n')>9 && date('j')>10)
+                    Ma&ntilde;anas: 10:00 a 14:00 h.<br/>
+                    Tardes: 16:00 a 20:00 h.<br/>
+                @else
+                    Ma&ntilde;anas: 10:00 a 14:00 h.<br/>
+                    Tardes: 16:30 a 20:30 h.<br/>
+                @endif
             </div>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

@@ -11,9 +11,10 @@ $(document).ready(function () {
     });
 });
 
+
 function checkNumPaginas() {
-    var color = 0.14;
-    var b_n = 0.028;
+    var color = setColor();
+    var b_n = setb_n();
     var suma = 0;
     var precio = parseFloat($('#precioDocumentoOnline').html());
     if ($('#tipo_impresion').val() == 'color') {
@@ -44,7 +45,11 @@ function checkEnvio(){
     if($('#tipo_envio').val()=='envio'){
         var suma = parseFloat(precio+4.95);
         $('#precioDocumentoOnline').html(suma.toFixed(2));
+        setPriceHidden(suma.toFixed(2));
+    }else{
+        setPriceHidden(precio.toFixed(2));
     }
+
 }
 
 
@@ -54,4 +59,16 @@ function checkButton(){
     }else{
         $('#addItem').prop('disabled','disabled');
     }
+}
+
+
+function setPriceHidden(suma){
+    $('#precioDocumentoOnlineInput').val(suma);
+}
+
+function setColor(){
+    return $('#precioDocumentoOnlineColor').val();
+}
+function setb_n(){
+    return $('#precioDocumentoOnlineBN').val();
 }

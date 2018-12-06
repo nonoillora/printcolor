@@ -29,15 +29,12 @@
             <h3>Presupuesto</h3>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            Nuestros servicios incluyen la fabricaci&oacute;n e instalaci&oacute;n de la imagen.
-        </div>
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <br/>
         </div>
         @if(Session::has('presupuestoOK'))
             <br/>
             <div class="alert alert-success">
-                <b>Presupuesto enviado correctamente.</b>
+                <b>Solicitud enviada correctamente.</b>
             </div>
         @endif
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -64,6 +61,8 @@
         <textarea class="form-control" name="comentario" placeholder="Expl&iacute;quenos que desea" required></textarea>
 
         <input type="hidden" class="form-control" name="idProducto" value="{{$producto->id}}">
+        <input type="hidden" class="form-control" name="respondido" value="0">
+
         <br/>
         <button type="submit" class="center-block btn btn-success">Enviar</button>
         {!! Form::close() !!}

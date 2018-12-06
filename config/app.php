@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Europe/Madrid',
 
     /*
     |--------------------------------------------------------------------------
@@ -178,7 +178,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        Barryvdh\DomPDF\ServiceProvider::class,
+        Spatie\Backup\BackupServiceProvider::class,
     ],
 
     /*
@@ -230,6 +231,12 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'HelperProduct' => App\SupportFunctions\HelperProduct::class,
         'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Uuid' => Webpatser\Uuid\Uuid::class,
+        'Helper'=>App\SupportFunctions\Helper::class,
+        'HelperConfig'=>App\SupportFunctions\HelperConfig::class,
+        'HelperMail'=>App\SupportFunctions\HelperMail::class,
+        'HelperNotificationsAdmin'=>App\SupportFunctions\HelperNotificationsAdmin::class
     ],
 
 ];

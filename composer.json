@@ -9,7 +9,12 @@
         "laravel/framework": "5.4.*",
         "twbs/bootstrap": "^3.3",
         "laravelcollective/html": "^5.3.0",
-        "gloudemans/shoppingcart": "^2.3"
+        "gloudemans/shoppingcart": "^2.3",
+        "doctrine/dbal": "^2.5",
+        "barryvdh/laravel-dompdf": "^0.8.1",
+        "webpatser/laravel-uuid": "2.*",
+        "spatie/laravel-backup": "^3.0.0",
+        "maknz/slack": "^1.7"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

@@ -11,7 +11,7 @@ $(document).ready(function () {
     });
 
     $('#confirmDeleteProduct').on('click',function(){
-        window.location.href = 'http://localhost/printcolor/admin/producto/borrar/'+$('#idProduct').val();
+        window.location.href = 'http://printcolor.antonioextremera.com/admin/producto/borrar/'+$('#idProduct').val();
     });
 });
 

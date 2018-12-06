@@ -38,7 +38,7 @@
         @if(Session::has('presupuestoOK'))
             <br/>
             <div class="alert alert-success">
-                <b>Presupuesto enviado correctamente.</b>
+                <b>Solicitud enviada correctamente.</b>
             </div>
         @endif
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -51,10 +51,6 @@
 
         ¿Para exterior o interior?:
         {{Form::select('tipo',['exterior'=>'Exterior','Interior'=>'Interior'],null,['class'=>'form-control','placeholder'=>'Seleccione un tipo','required'=>'required'])}}
-
-        ¿Cuantos colores quieres usar?:
-        {{Form::text('colores',null,['class'=>'form-control','placeholder'=>'Introduzca las medidas','required'=>'required'])}}
-
 
         Su nombre <b>*</b>
         <input type="text" class="form-control" name="nombre" placeholder="Nombre" required>

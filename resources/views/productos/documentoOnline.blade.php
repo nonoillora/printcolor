@@ -14,6 +14,11 @@
             <span class="glyphicon glyphicon-menu-right"></span> <a
                     href="{!! url('producto/'.$producto->id.'/'.str_slug($producto->name,'-')) !!}">{{$producto->name}}</a>
         </div>
+        @if(Session::has('productAddedSuccessfully'))
+            <div class="alert alert-success">
+                <b>{{Session::get('productAddedSuccessfully')}}</b>
+            </div>
+        @endif
         <div class="amarillo padding5">
             <h3>{{$producto->name}}</h3>
         </div>
@@ -34,20 +39,20 @@
         @if(Session::has('presupuestoOK'))
             <br/>
             <div class="alert alert-success">
-                <b>Presupuesto enviado correctamente.</b>
+                <b>Solicitud enviada correctamente.</b>
             </div>
         @endif
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             @include('components/errors')
         </div>
-        {!! Form::open(['url'=>'addItem','method'=>'post','class'=>'form']) !!}
+        {!! Form::open(['url'=>'save','method'=>'post','class'=>'form']) !!}
 
         <p>Puedes rellenar el siguiente formulario, o escribirnos un correo electrónico a info@printcolorillora.com, con las
         características de tu libro, revista o catálogo.</p>
 
         <p>1º Tipo de impresión:</p>
-        {{Form::select('tipo_impresion',['b/n'=>'B/N - 0,028€ / página',
-'color'=>'Color - 0,14€ / página'],
+        {{Form::select('tipo_impresion',['b/n'=>'B/N - '.HelperConfig::getConfig('_PRICE_IMPRESS_TYPE_BLACK_WHITE').'€ / página',
+'color'=>'Color - '.HelperConfig::getConfig('_PRICE_IMPRESS_TYPE_COLOR').'€ / página'],
 'b/n',['class'=>'form-control','id'=>'tipo_impresion'])}}
         <br/>
         <p>2º Número de páginas:</p>
@@ -79,10 +84,14 @@
         elegir un envío a domicilio para todos los documentos en el carro de compra.</p>
 
         TOTAL: <span id="precioDocumentoOnline">0,00</span> €
-        <input type="hidden" class="form-control" name="idProducto" value="{{$producto->id}}" placeholder="Empresa">
+        {!! Form::hidden('idProducto',$producto->id) !!}
+        {!! Form::hidden('precioDocumentoOnline',null,['id'=>'precioDocumentoOnlineInput']) !!}
+        {!! Form::hidden('precioDocumentoOnlineBN',HelperConfig::getConfig('_PRICE_IMPRESS_TYPE_BLACK_WHITE'),['id'=>'precioDocumentoOnlineBN']) !!}
+        {!! Form::hidden('precioDocumentoOnlineColor',HelperConfig::getConfig('_PRICE_IMPRESS_TYPE_COLOR'),['id'=>'precioDocumentoOnlineColor']) !!}
+
         <br/>
         <br/>
-        <button type="submit" class="center-block btn btn-success btn-block" id="addItem">Añadir a la cesta</button>
+        {!! Form::submit('Añadir a la cesta',['class'=>'center-block btn btn-success btn-block','id'=>'addItem']) !!}
         {!! Form::close() !!}
         <br/>
     </div>

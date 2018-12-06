@@ -3,8 +3,11 @@
     {{$title}}
 @endsection
 @section('content')
-    <div class="amarillo padding5">
-        <h3 id="titleIndex">Seleccione el producto que necesita:</h3>
+    <div>
+        <h2><b><span style="margin-left:10px;">Imprenta Rapida y Segura</span></b></h2>
+    </div>
+    <div class="amarillo">
+        <h3 id="titleIndex" style="padding: 3px;">Seleccione el producto que necesita:</h3>
     </div>
     <br/>
     @foreach($categorias as $categoria)

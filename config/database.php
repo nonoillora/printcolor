@@ -62,8 +62,11 @@ return [
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
-            'strict' => true,
+            'strict' =>false,
             'engine' => null,
+            'dump_command_path' => 'C:/xampp/mysql/bin', // only the path, so without 'mysqldump' or 'pg_dump'
+            'dump_command_timeout' => 60 * 5, // 5 minute timeout
+            'dump_using_single_transaction' => true, // perform dump using a single transaction
         ],
 
         'pgsql' => [

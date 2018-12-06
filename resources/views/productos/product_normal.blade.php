@@ -16,30 +16,49 @@
                     <span class="glyphicon glyphicon-menu-right"></span> <a
                             href="{!! url('producto/'.$producto->id.'/'.str_slug($producto->name,'-')) !!}">{{$producto->name}}</a>
                 </div>
+                @if(Session::has('productAddedSuccessfully'))
+                    <div class="alert alert-success">
+                        <b>{{Session::get('productAddedSuccessfully')}}</b>
+                    </div>
+                @endif
                 <div class="amarillo padding5">
                     <h3>{{$producto->name}}</h3>
                 </div>
                 @if($producto->image=='')
                     <img src="{!! asset('img/imageProduct.png') !!}" class="img-responsive center-block"/>
                 @else
-                    <img src="{!! asset('storage/app/public/productos/'.$producto->image) !!}" class="img-responsive center-block"/>
+                    <img src="{{ url('getFile/productos/'.$producto->image)}}" class="img-responsive center-block"/>
+                @endif
+                @if(isset($producto->footer_image) && !empty($producto->footer_image))
+                    <label class="label label-default center-block">
+                        {{$producto->footer_image}}
+                    </label>
                 @endif
                 <br/>
+
                 <div class="amarillo padding5">
                     <h3>Descripci&oacute;n</h3>
                 </div>
                 @include('components/informacion')
                 {{--@include('precios/tarjetas_visita_simples')--}}
-                @include('precios/table_precios')
+                {!! Form::open(['method'=>'post','url'=>'save']) !!}
+                @if($producto->id==7)
+                    @include('precios/table_precios_producto_7')
+                @elseif($producto->id==37)
+                    @include('precios/table_precios_producto_37')
+                @else
+                    @include('precios/table_precios')
+                @endif
+                @include('productos/personalizacion/base')
                 {{--form contacto--}}
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <br/>
                 </div>
-                {!! Form::open(['url'=>'save','method'=>'post','files'=>true,'class'=>'form']) !!}
-                @include('productos/tarjetas_visita/form_tarjetas_visita')
-                {{--@include('contact-form')--}}
-                <button type="submit" class="btn btn-success center-block">A&ntilde;adir a cesta</button>
+                <button type="submit" class="btn btn-success center-block" disabled="disabled" id="saveProductCart">A&ntilde;adir
+                    a cesta
+                </button>
                 {!! Form::close() !!}
+                <br/>
             </div>
         </div>
     </div>

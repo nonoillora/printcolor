@@ -1,6 +1,8 @@
 body {
     font-size: 14px;
     background: white;
+    src: url(ComicSansMSRegular.ttf);
+    font-family: "Comic Sans MS";
 }
 
 .amarillo {
@@ -181,3 +183,7 @@ input:checked + .slider:before {
     top: 50%;
 }
 
+.tituloCat{
+    min-height: 80px;
+    overflow: hidden;
+}

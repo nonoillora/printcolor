@@ -62,6 +62,27 @@ return [
             'bucket' => 'your-bucket',
         ],
 
+        'productos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/productos/'),
+            'visibility' => 'public',
+        ],
+        'categorias' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/categoria/'),
+            'visibility' => 'public',
+        ],
+        'facturas' => [
+            'driver' => 'local',
+            'root' => storage_path('app/bills/'),
+            'visibility' => 'public',
+        ],
+        'ofertas' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/ofertas/'),
+            'visibility' => 'public',
+        ],
+
     ],
 
 ];

@@ -37,7 +37,7 @@
         @if(Session::has('presupuestoOK'))
             <br/>
             <div class="alert alert-success">
-                <b>Presupuesto enviado correctamente.</b>
+                <b>Solicitud enviada correctamente.</b>
             </div>
         @endif
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -46,7 +46,7 @@
         {!! Form::open(['url'=>'newpresupuesto','method'=>'post','class'=>'form']) !!}
 
         Cantidad:
-        {{Form::number('cantidad',1,['class'=>'form-control','placeholder'=>'Introduzca una cantidad','required'=>'required','min'=>1])}}
+        {{Form::number('cantidad',20,['class'=>'form-control','placeholder'=>'Introduzca una cantidad','required'=>'required','min'=>20])}}
 
         Número de caras:
         {{Form::select('caras',['1'=>'1 Cara','2'=>'2 Caras'],null,['class'=>'form-control','placeholder'=>'Seleccionar','required'=>'required'])}}
@@ -55,7 +55,7 @@
         {{Form::select('numeracion',['si'=>'Si','no'=>'No'],null,['class'=>'form-control','placeholder'=>'Seleccionar','required'=>'required'])}}
 
         Fotografía:
-        {{Form::select('numeracion',['si'=>'Si','no'=>'No'],null,['class'=>'form-control','placeholder'=>'Seleccionar','required'=>'required'])}}
+        {{Form::select('fotografia',['si'=>'Si','no'=>'No'],null,['class'=>'form-control','placeholder'=>'Seleccionar','required'=>'required'])}}
 
         Nombre y apellidos:
         {{Form::select('full_name',['si'=>'Si','no'=>'No'],null,['class'=>'form-control','placeholder'=>'Seleccionar','required'=>'required'])}}

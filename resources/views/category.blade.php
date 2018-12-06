@@ -18,7 +18,7 @@
                     <h3>{{$name}}</h3>
                 </div>
                 @foreach($productos as $producto)
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 productoItem">
                         <a target="_self"
                            href="{!! url('producto/'.$producto->id.'/'.str_slug($producto->name,'-')) !!}">
                             <div class="thumbnail noUnderline" style="border:none">
@@ -41,5 +41,18 @@
             </div>
         </div>
     </div>
-
+    <link type="text/css" rel="stylesheet" href="{{asset('css/animate.css')}}">
+    <script type="text/javascript">
+        $(document).ready(function () {
+                    $('.productoItem').hover(
+                            function () {
+                                $(this).addClass('tada animated');
+                            }, function () {
+                                $(this).removeClass('tada animated');
+                            }
+                    );
+                }
+        )
+        ;
+    </script>
 @endsection

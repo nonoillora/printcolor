@@ -3,7 +3,10 @@
     {{$title}}
 @endsection
 @section('adminContent')
-    <div class="breadcrumb">Categor&iacute;a > Ver Todas
+    <div class="breadcrumb">
+        <a href="{{url('admin')}}">Administraci&oacute;n</a> <span class="glyphicon glyphicon-chevron-right"></span>
+        <a href="{{url('admin/categoria')}}">Categoría</a> <span class="glyphicon glyphicon-chevron-right"></span>
+        <a href="{{url('admin/categoria')}}">Ver Categorias</a>
         <div class="pull-right">
             @include('administracion/notificacionBreadcrumb')
         </div>
@@ -18,8 +21,8 @@
                                 <img src="{{asset('storage/app/public/categoria/'.$categoria->image)}}"
                                      class="img-responsive"/>
                             </div>
-                            <div class="col-lg-6" style="min-height: 150px;border:1px solid red">
-                                <span class="vertical-align" style="top: 70px;position: relative;display: block">{{$categoria->name}}</span>
+                            <div class="col-lg-6 vertical-align text-center">
+                               <span class="">{{$categoria->name}}</span>
                             </div>
                             <div class="col-lg-3">
                                 <a href=""class="btn btn-primary">

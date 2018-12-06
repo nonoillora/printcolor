@@ -12,20 +12,21 @@
              aria-labelledby="headingOne">
             <ul class="list-group">
                 <a href="{{url('admin/pedidos')}}"
-                   class="list-group-item noUnderline @if(Request::segment(2)=='pedidos' && Request::segment(3)=='') active @endif">&Uacute;ltimos
-                    Pedidos
+                   class="list-group-item noUnderline @if(Request::segment(2)=='pedidos' && Request::segment(3)=='') active @endif">Ver
+                    Todos
                 </a>
-                <a class="list-group-item noUnderline">Ver Todos</a>
                 <a href="{{url('admin/presupuestos')}}"
                    class="list-group-item noUnderline @if(Request::segment(2)=='presupuestos') active @endif">
                     Presupuestos
                 </a>
-                <a a href="{{url('admin/pedidos/pendientes')}}"
+                <a href="{{url('admin/pedidos/pendientes')}}"
                    class="list-group-item noUnderline @if(Request::segment(3)=='pendientes' && Request::segment(2)=='pedidos') active @endif">
-                    Pedidos Pedientes
+                    Pedidos Pendientes
                 </a>
-                <li class="list-group-item">Pedidos Enviados</li>
-                <li class="list-group-item">Pedidos Sin Pagar</li>
+                <a href="{{url('admin/pedidos/enviados')}}"
+                   class="list-group-item noUnderline @if(Request::segment(3)=='enviados' && Request::segment(2)=='pedidos') active @endif">Pedidos Enviados</a>
+                <a href="{{url('admin/pedidos/pagados')}}"
+                   class="list-group-item noUnderline @if(Request::segment(3)=='pagados' && Request::segment(2)=='pedidos') active @endif">Pedidos Sin Pagar</a>
             </ul>
         </div>
     </div>
@@ -43,10 +44,12 @@
         <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel"
              aria-labelledby="headingTwo">
             <ul class="list-group">
-                <a class="list-group-item noUnderline @if(Request::segment(2)=='categoria' && Request::segment(3)=='') active @endif" href="{{url('admin/categoria')}}">Ver Todas</a>
-                <a class="list-group-item noUnderline @if(Request::segment(2)=='categoria' && Request::segment(3)=='nueva') active @endif" href="{{url('admin/categoria/nueva')}}">A&ntilde;adir Categor&iacute;a</a>
-                <li class="list-group-item">Eliminar Categoria</li>
-                <a class="list-group-item noUnderline @if(Request::segment(2)=='categoria' && Request::segment(3)=='editar') active @endif" href="{{url('admin/categoria/editar')}}">Editar Categoria</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='categoria' && Request::segment(3)=='editar') active @endif"
+                   href="{{url('admin/categoria/editar')}}">Ver/Editar Categoría</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='categoria' && Request::segment(3)=='nueva') active @endif"
+                   href="{{url('admin/categoria/nueva')}}">A&ntilde;adir Categor&iacute;a</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='categoria' && Request::segment(3)=='borrar') active @endif"
+                   href="{{url('admin/categoria/borrar')}}">Eliminar Categoria</a>
             </ul>
         </div>
     </div>
@@ -64,10 +67,12 @@
         <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel"
              aria-labelledby="headingThree">
             <ul class="list-group">
-                <a class="list-group-item noUnderline @if(Request::segment(2)=='producto' && Request::segment(3)=='') active @endif" href="{{url('admin/producto')}}">Ver Todos</a>
-                <a class="list-group-item noUnderline @if(Request::segment(2)=='producto' && Request::segment(3)=='nuevo') active @endif" href="{{url('admin/producto/nuevo')}}">A&ntilde;adir Producto</a>
-                <a class="list-group-item noUnderline @if(Request::segment(2)=='producto' && Request::segment(3)=='borrar') active @endif" href="{{url('admin/producto/borrar')}}">Eliminar Producto</a>
-                <a class="list-group-item noUnderline @if(Request::segment(2)=='producto' && Request::segment(3)=='editar') active @endif" href="{{url('admin/producto/editar')}}">Editar Producto</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='producto' && Request::segment(3)=='editar') active @endif"
+                   href="{{url('admin/producto/editar')}}">Ver/Editar Producto</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='producto' && Request::segment(3)=='nuevo') active @endif"
+                   href="{{url('admin/producto/nuevo')}}">A&ntilde;adir Producto</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='producto' && Request::segment(3)=='borrar') active @endif"
+                   href="{{url('admin/producto/borrar')}}">Eliminar Producto</a>
             </ul>
         </div>
     </div>
@@ -85,10 +90,9 @@
         <div id="collapseFour" class="panel-collapse collapse in" role="tabpanel"
              aria-labelledby="headingFour">
             <ul class="list-group">
-                <li class="list-group-item">Ver Todas</li>
-                <li class="list-group-item">Eliminar Ofertas</li>
-                <li class="list-group-item">Editar Ofertas</li>
-                <li class="list-group-item">Editar Ofertas Index</li>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='ofertas' && Request::segment(3)=='') active @endif"  href="{{url('admin/ofertas/')}}" >Ver/Editar Ofertas</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='ofertas' && Request::segment(3)=='nueva') active @endif"  href="{{url('admin/ofertas/nueva')}}" >Añadir Oferta</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='ofertas' && Request::segment(3)=='borrar') active @endif"  href="{{url('admin/ofertas/borrar')}}">Eliminar Oferta</a>
             </ul>
         </div>
     </div>
@@ -99,18 +103,21 @@
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive"
                    aria-expanded="true" aria-controls="collapseFive">
-                    <b>Administraci&oacute;n (To Do)</b>
+                    <b>Administraci&oacute;n</b>
                 </a>
             </h4>
         </div>
         <div id="collapseFive" class="panel-collapse collapse" role="tabpanel"
              aria-labelledby="headingFive">
             <ul class="list-group">
-                <li class="list-group-item">Total Ventas</li>
-                <li class="list-group-item">Listar Ficheros Pedidos</li>
-                <li class="list-group-item">Morbi leo risus</li>
-                <li class="list-group-item">Porta ac consectetur ac</li>
-                <li class="list-group-item">Vestibulum at eros</li>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='shipping' && Request::segment(3)=='') active @endif"
+                   href="{{url('admin/shipping/')}}">Empresas de transporte</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='utilidades' && Request::segment(3)=='') active @endif"
+                   href="{{url('admin/utilidades')}}">Utilidades</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='config' && Request::segment(3)=='') active @endif"
+                   href="{{url('admin/config')}}">Configuración</a>
+                <a class="list-group-item noUnderline @if(Request::segment(2)=='ficheros' && Request::segment(3)=='') active @endif"
+                   href="{{url('admin/ficheros')}}">Ficheros</a>
             </ul>
         </div>
     </div>

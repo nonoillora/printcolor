@@ -3,7 +3,9 @@
     {{$title}}
 @endsection
 @section('adminContent')
-    <div class="breadcrumb">Categor&iacute;as
+    <div class="breadcrumb">
+        <a href="{{url('admin')}}">Administraci&oacute;n</a> <span class="glyphicon glyphicon-chevron-right"></span>
+        <a href="{{url('admin/categoria')}}">Categoría</a> <span class="glyphicon glyphicon-chevron-right"></span> <a href="{{url('admin/categoria/nueva')}}">Nueva Categoría</a>
         <div class="pull-right">
             @include('administracion/notificacionBreadcrumb')
         </div>

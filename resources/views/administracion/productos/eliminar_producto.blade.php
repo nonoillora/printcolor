@@ -1,6 +1,11 @@
 @extends('administracion/adminTemplate')
+@section('titleAdmin')
+    {{$title}}
+@endsection
 @section('adminContent')
-    <div class="breadcrumb"> Producto <span class="glyphicon glyphicon-chevron-right"></span> Editar
+    <div class="breadcrumb">
+    <a href="{{url('admin')}}">Administraci&oacute;n</a> <span class="glyphicon glyphicon-chevron-right"></span>
+    <a href="{{url('admin/producto')}}">Producto </a> <span class="glyphicon glyphicon-chevron-right"></span> <a href="{{url('admin/producto/borrar')}}">Borrar Productos</a>
         <div class="pull-right">
             @include('administracion/notificacionBreadcrumb')
         </div>

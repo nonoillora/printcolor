@@ -3,7 +3,9 @@
     {{$title}}
 @endsection
 @section('adminContent')
-    <div class="breadcrumb">Producto <span class="glyphicon glyphicon-chevron-right"></span> Nuevo Producto
+    <div class="breadcrumb">
+        <a href="{{url('admin')}}">Administraci&oacute;n</a> <span class="glyphicon glyphicon-chevron-right"></span> <a
+                href="{{url('admin/producto')}}">Producto</a> <span class="glyphicon glyphicon-chevron-right"></span> <a href="{{url('admin/producto/nuevo')}}">Nuevo Producto</a>
         <div class="pull-right">
             @include('administracion/notificacionBreadcrumb')
         </div>
@@ -37,6 +39,9 @@
                     Buscar
                     Fichero {!! Form::file('inside',['class'=>'btn btn-primary btn-block','required'=>'required','style'=>'display:none']) !!}
                 </label>
+                <br/>
+                {!! Form::label('','Pie de foto',['class'=>'label label-default']) !!}
+                {!! Form::text('footer_image',null,['class'=>'form-control']) !!}
                 <br/>
                 {!! Form::textarea('descripcion',null,['class'=>'form-control','required'=>'required','min-length'=>'5']) !!}
                 <br/>

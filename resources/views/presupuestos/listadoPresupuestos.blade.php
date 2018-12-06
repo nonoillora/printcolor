@@ -1,5 +1,5 @@
 @extends('administracion/adminTemplate')
-@section('titleAdmnin')
+@section('titleAdmin')
     {{$title}}
 @endsection
 @section('adminContent')
@@ -24,7 +24,7 @@
             </a>
         @endforeach
     </ul>
-    <div>
+    <div class="text-center">
         {{$presupuestos->links()}}
     </div>
 @endsection

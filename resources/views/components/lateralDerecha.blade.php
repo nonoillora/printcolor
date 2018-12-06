@@ -1,34 +1,32 @@
 <div id="carousel-example-generic" class="carousel slide hidden-xs" data-ride="carousel">
     <!-- Wrapper for slides -->
     <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="{!! asset('storage/app/public/ofertas/a.jpg') !!}" alt="..."
+        @foreach(HelperProduct::getOffers() as $offer)
+        <div class="item @if($loop->first) active @endif">
+            <a href="{{url('producto/'.$offer->id.'/'.str_slug($offer->name,'-'))}}">
+            <img src="{!! asset('storage/app/public/ofertas/'.$offer->cover) !!}" alt="..."
                  class="center-block img-responsive">
-
-            <div class="carousel-caption">
-                ...
-            </div>
+            </a>
         </div>
-        <div class="item">
-            <img src="{!! asset('storage/app/public/ofertas/b.jpg') !!}" alt="..."
-                 class="center-block img-responsive">
-
-            <div class="carousel-caption">
-                ...
-            </div>
-        </div>
-        <div class="item">
-            <img src="{!! asset('storage/app/public/ofertas/c.jpg') !!}" alt="..."
-                 class="center-block img-responsive">
-
-            <div class="carousel-caption">
-                ...
-            </div>
-        </div>
+        @endforeach
     </div>
 </div>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <br/>
+</div>
+<div>
+    @if(Session::has('messageOK'))
+        <br/>
+        <div class="alert alert-success">
+            <b>Mensaje recibido correctamente.</b>
+        </div>
+    @endif
+    @if(Session::has('errorMessage'))
+            <br/>
+        <div class="alert alert-danger">
+            <b>Ops.</b> Algo fue mal.
+        </div>
+    @endif
 </div>
 <div>
     <b>Contacte con nosotros</b><br/>
@@ -43,13 +41,6 @@
     <br/>
     <button type="submit" class="center-block btn btn-primary">Enviar</button>
     {!! Form::close() !!}
-    {{--@include('components/errors')--}}
-    @if(Session::has('messageOK'))
-        <br/>
-        <div class="alert alert-success">
-            <b>Mensaje recibido correctamente.</b>
-        </div>
-    @endif
     <br/>
 </div>
 <div class="hidden-lg hidden-md hidden-sm col-xs-12 text-center">

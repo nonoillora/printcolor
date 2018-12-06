@@ -21,7 +21,9 @@
                 <li class="@if(Request::segment(1)=='faq') active @endif"><a href="{!! url('faq') !!}">Preguntas Frecuentes</a></li>
                 <li class="@if(Request::segment(1)=='ofertas') active @endif"><a href="{!! url('ofertas') !!}">Ofertas</a></li>
                 <li class="@if(Request::segment(1)=='nosotros') active @endif"><a href="{!! url('nosotros') !!}">Con&oacute;cenos</a></li>
+{{--
                 <li class="@if(Request::segment(1)=='plantillas') active @endif"><a href="{!! url('plantillas') !!}">Plantillas</a></li>
+--}}
                 <li class="@if(Request::segment(1)=='subirficheros') active @endif"><a href="{!! url('subirficheros') !!}">Subir Ficheros</a></li>
                 <li class="@if(Request::segment(1)=='mi-compra') active @endif"><a href="{!! url('cesta') !!}">Mi Cesta</a></li>
                 <li>

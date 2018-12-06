@@ -3,7 +3,10 @@
     {{$title}}
     @endsection
 @section('adminContent')
-    <div class="breadcrumb">Productos
+    <div class="breadcrumb">
+        <a href="{{url('admin')}}">Administraci&oacute;n</a> <span class="glyphicon glyphicon-chevron-right"></span>
+        <a href="{{url('admin/producto')}}">Producto </a> <span class="glyphicon glyphicon-chevron-right"></span> <a href="{{url('admin/producto/editar')}}">Editar Producto</a>
+        <span class="glyphicon glyphicon-chevron-right"></span> <a href="{{url('admin/producto/editar/'.$producto->id)}}">{{$producto->name}}</a>
         <div class="pull-right">
             @include('administracion/notificacionBreadcrumb')
         </div>
@@ -23,7 +26,7 @@
             <fieldset>
                 <legend>{{$producto->name}} </legend>
 
-                {!! Form::open(['url' => 'admin/producto/saveeditcat', 'method' => 'post','files'=>true,'class'=>'form']) !!}
+                {!! Form::open(['url' => 'admin/producto/saveeditprod', 'method' => 'post','files'=>true,'class'=>'form']) !!}
                 {!!  Form::hidden('id',$producto->id)!!}
                 {!! Form::label('','Nombre',['class'=>'label label-default']) !!}
                 {!! Form::text('nombre',$producto->name,['class'=>'form-control','placeholder'=>'Nombre','required'=>'required']) !!}
@@ -32,12 +35,12 @@
                 @if(empty($producto->cover))
                     <label class="btn btn-primary btn-file btn-block">
                         Buscar
-                        Fichero {!! Form::file('cover',['class'=>'btn btn-primary btn-block','required'=>'required','style'=>'display:none']) !!}
+                        Fichero {!! Form::file('cover',['class'=>'btn btn-primary btn-block','style'=>'display:none']) !!}
                     </label>
                 @else
                     <img src="{{asset('/storage/app/public/productos/'.$producto->cover)}}"
                          class="img-responsive img-rounded center-block">
-                    <a href="{{url('admin/producto/remove/'.$producto->id.'/'.$producto->cover)}}"
+                    <a href="{{url('admin/producto/remove/cover/'.$producto->id.'/'.$producto->cover)}}"
                        class="btn btn-danger center-block">
                         <span class="glyphicon glyphicon-trash"></span> &iquest;Eliminar imagen?
                     </a>
@@ -47,16 +50,19 @@
                 @if(empty($producto->image))
                     <label class="btn btn-primary btn-file btn-block">
                         Buscar
-                        Fichero {!! Form::file('cover',['class'=>'btn btn-primary btn-block','required'=>'required','style'=>'display:none']) !!}
+                        Fichero {!! Form::file('myimage',['class'=>'btn btn-primary btn-block','style'=>'display:none']) !!}
                     </label>
                 @else
                     <img src="{{asset('/storage/app/public/productos/'.$producto->image)}}"
                          class="img-responsive img-rounded center-block">
-                    <a href="{{url('admin/producto/remove/'.$producto->id.'/'.$producto->image)}}"
+                    <a href="{{url('admin/producto/remove/image/'.$producto->id.'/'.$producto->image)}}"
                        class="btn btn-danger center-block">
                         <span class="glyphicon glyphicon-trash"></span> &iquest;Eliminar imagen?
                     </a>
                 @endif
+                <br/>
+                {!! Form::label('','Pie de foto',['class'=>'label label-default']) !!}
+                {!! Form::text('footer_image',$producto->footer_image,['class'=>'form-control']) !!}
                 <br/>
                 {!! Form::textarea('description',$producto->description,['class'=>'form-control','placeholder'=>'Descripción']) !!}
                 <br/>
@@ -68,6 +74,14 @@
                     <span class="glyphicon glyphicon-question-sign"></span>
                 </span>
                 <br/>
+                @if($totalItems>0)
+                @if($totalItems%count($typePrice)!=0)
+                    <br/>
+                    <div class="alert alert-danger">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span> <b>Hemos realizado unas comprobaciones y te falta alguna cantidad en tipo de acabado</b>
+                    </div>
+                @endif
+                @endif
                 @if(count($typePrice)>0)
                     {!! Form::label('','Precios',['class'=>'label label-default']) !!}
                     @foreach($typePrice as $type)
@@ -150,7 +164,7 @@
                     {!! Form::label('','Tipo') !!}
                     {!! Form::select('type',$tipoSelect,null,['class'=>'form-control','placeholder'=>'Tipo','required'=>'required','id'=>'newType']) !!}
                     {!! Form::label('','Unidades') !!}
-                    {!! Form::number('uds',null,['class'=>'form-control','placeholder'=>'Unidades','required'=>'required','id'=>'newCount']) !!}
+                    {!! Form::text('uds',null,['class'=>'form-control','placeholder'=>'Unidades','required'=>'required','id'=>'newCount']) !!}
                     {!! Form::label('','Precio') !!}
                     {!! Form::number('price',null,['class'=>'form-control','placeholder'=>'Precio','required'=>'required','id'=>'newPrice']) !!}
                 </div>
@@ -196,7 +210,7 @@
                     {!! Form::label('','Tipo') !!}
                     {!! Form::select('type',$tipoSelect,null,['class'=>'form-control','placeholder'=>'Tipo','required'=>'required','id'=>'editType']) !!}
                     {!! Form::label('','Unidades') !!}
-                    {!! Form::number('uds',null,['class'=>'form-control','placeholder'=>'Unidades','required'=>'required','id'=>'editCount']) !!}
+                    {!! Form::text('uds',null,['class'=>'form-control','placeholder'=>'Unidades','required'=>'required','id'=>'editCount']) !!}
                     {!! Form::label('','Precio') !!}
                     {!! Form::number('price',null,['class'=>'form-control','placeholder'=>'Precio','required'=>'required','id'=>'editPrice']) !!}
                     {!! Form::hidden('idProductPriceEdit',null,['id'=>'idProductPriceEdit']) !!}
