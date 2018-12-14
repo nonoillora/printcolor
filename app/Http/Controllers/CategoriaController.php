@@ -3,23 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Producto;
 use Illuminate\Http\Request;
 use DB;
 use Storage;
 use Cart;
 use Illuminate\Http\File;
+use Auth;
+use Carbon\Carbon;
 
 class CategoriaController extends Controller
 {
     public function getCategory(Request $request)
     {
-        $category = DB::table('categories')->select('name')->where('id', $request->id)->first();
-        if (!isset($category)) {
+        $category = DB::table('categories')->select('name','category_is_active')->where('id', $request->id)->first();
+        if (!isset($category)|| $category->category_is_active==0 ) {
             abort('404');
         }
         $categorias = DB::table('categories')->select('*')->get();
-        $products = DB::table('productos')->select('*')->where('idCategoria', $request->id)->get();
-        if (count($products) == 1) {
+        $products = DB::table('productos')->select('*')->where(['idCategoria'=> $request->id,'product_is_active'=>1])->get();
+        if(!isset($category) && $products->isEmpty()){
+            abort('404');
+        }
+        if (isset($products)) {
             return redirect('producto/' . $products->first()->id . '/' . str_slug($products->first()->name, '-'));
         } else {
             return view('category', ['id' => $request->id,
@@ -39,18 +45,6 @@ class CategoriaController extends Controller
         }
     }
 
-    public function getTest(Request $request)
-    {
-
-        if ($request->isEmpresa == "on") {
-            dd('hey');
-        } else {
-
-        }
-        $request->file('imagen1')->store('public');
-        dd($request->imagen1);
-    }
-
     public function getNuevaCategoria()
     {
         return view('administracion/categorias/nueva_categoria', ['title' => 'Nueva Categor&iacute;a']);
@@ -58,7 +52,7 @@ class CategoriaController extends Controller
 
     public function getTodasCategoria()
     {
-        return view('administracion/categorias/todas', ['title' => 'Categor&iacute;a', 'categories' => DB::table('categories')->select('name', 'image')->paginate(10)]);
+        return view('administracion/categorias/todas', ['title' => 'Categor&iacute;a', 'categories' => DB::table('categories')->select('name', 'image')->where('category_is_active',1)->paginate(10)]);
     }
 
     public function saveNewCat(Request $request)
@@ -124,7 +118,35 @@ class CategoriaController extends Controller
         } else {
             return redirect()->back()->withErrors();
         }
+    }
 
-
+    public function removeCategory($id=null){
+        if(!is_null($id)){
+            $category = Category::find($id);
+            $category->category_is_active=0;
+            $category->deleted_by_user_id = Auth::id();
+            $category->deleted_at = Carbon::now('Europe/Madrid');
+            $statusCategory =$category->save();
+            $productos = Producto::where('idCategoria',$id)->get();
+            $totalProduct = count($productos);
+            $counterStatusProduct = 0;
+            foreach($productos as $producto){
+                $producto->product_is_active  =0;
+                $producto->deleted_by_user_id = Auth::id();
+                $producto->deleted_at = Carbon::now('Europe/Madrid');
+                $status=$producto->save();
+                if($status){
+                   $counterStatusProduct++;
+                }
+            }
+            if ($statusCategory && $counterStatusProduct==$totalProduct) {
+                return redirect()->back()->with(['successCategory' => 'Categoría borrado satisfactoriamente']);
+            } else {
+                return redirect()->back()->with(['failCategory' => 'Fallo al borrar la categoría']);
+            }
+        }else{
+            return view('administracion/categorias/eliminar_categoria', ['title' => 'Borrar Categorías',
+                'categories' => DB::table('categories')->select('name', 'image', 'id')->where('category_is_active',1)->paginate(17)]);
+        }
     }
 }

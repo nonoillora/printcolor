@@ -9,11 +9,13 @@ class Cliente extends Model
     protected $fillable = ['full_name',
         'enterprise',
         'phone',
-        'nif-cif',
+        'nif_cif',
         'address',
         'poblation',
-        'posta_code',
+        'postal_code',
         'provence',
         'email',
-        'observations'];
+        'observations',
+        'session_id'
+    ];
 }

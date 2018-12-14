@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EnviarPresupuesto;
 use App\Presupuesto;
 use App\PriceProduct;
 use Illuminate\Http\Request;
@@ -13,6 +14,9 @@ use Storage;
 use Illuminate\Http\File;
 use App\Producto;
 use App\TypePriceProduct;
+use Mail;
+use Carbon\Carbon;
+use Auth;
 
 class ProductoController extends Controller
 {
@@ -27,7 +31,7 @@ class ProductoController extends Controller
     {
         $categorias = DB::table('categories')->select('*')->get();
         $product = DB::table('productos')->select('*')->where('id', $request->id)->first();
-        if (!isset($product)|| $product == [] || $product == null) {
+        if (!isset($product) || $product == [] || $product == null || $product->product_is_active == 0) {
             abort('404');
         } else {
             $category = DB::table('categories')->select('name', 'id')->where('id', $product->idCategoria)->first();
@@ -40,23 +44,203 @@ class ProductoController extends Controller
                     'categorias' => $categorias]);
             } else {
                 $typePrice = DB::table('type_price_products')->select('nameTypePrice', 'id')->where(['idProduct' => $product->id])->get();
-                $prices = DB::Table('price_products')
-                    ->select('price', 'count', 'idTypePriceProduct', 'price_products.id')
-                    ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
-                    ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
-                    ->where(['productos.id' => $product->id])->orderBy('count', 'asc')->get();
-                $tipoSelect = [];
-                foreach ($typePrice as $type) {
-                    $tipoSelect[$type->id] = $type->nameTypePrice;
-                    $sameType = [];
-                    foreach ($prices as $price) {
-                        if ($price->idTypePriceProduct == $type->id) {
-                            array_push($sameType, $price);
+                if ($product->id == 37) {
+                    /*$prices = DB::Table('price_products')
+                        ->select('price', 'count', 'idTypePriceProduct', 'nameTypePrice', 'price_products.id')
+                        ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
+                        ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
+                        ->where('productos.id', '=', $product->id)
+                        ->orderBy(DB::raw('LENGTH(type_price_products.id),count'), 'asc')
+                        ->orderBy('type_price_products.id', 'asc')
+                        ->get();*/
+                    $prices1 = DB::Table('price_products')
+                        ->select('price', 'count', 'idTypePriceProduct', 'nameTypePrice', 'price_products.id')
+                        ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
+                        ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
+                        ->where([['productos.id', '=', $product->id], ['count', 'not like', '%Laminado%']])
+                        ->orderBy(DB::raw('ABS(price_products.count)'), 'asc')
+                        ->orderBy(DB::raw('LENGTH(type_price_products.id)'), 'asc')
+                        ->get();
+                    $prices2 = DB::Table('price_products')
+                        ->select('price', 'count', 'idTypePriceProduct', 'nameTypePrice', 'price_products.id')
+                        ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
+                        ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
+                        ->where([['productos.id', '=', $product->id], ['count', 'like', '%Laminado%']])
+                        ->orderBy(DB::raw('ABS(price_products.count)'), 'asc')
+                        ->orderBy(DB::raw('LENGTH(type_price_products.id)'), 'asc')
+                        ->get();
+
+                    $typePrice1 = DB::table('type_price_products')->select('nameTypePrice', 'id')->where([['idProduct', '=', $product->id]])->get();
+                    $typePrice2 = DB::table('type_price_products')->select('nameTypePrice', 'id')->where([['idProduct', '=', $product->id]])->get();
+                } else if ($product->id == 7) {
+                    $typePrice1 = DB::table('type_price_products')->select('nameTypePrice', 'id')->where([['idProduct', '=', $product->id], ['nameTypePrice', 'like', '%1 Cara']])->get();
+                    $typePrice2 = DB::table('type_price_products')->select('nameTypePrice', 'id')->where([['idProduct', '=', $product->id], ['nameTypePrice', 'like', '%2 Caras']])->get();
+
+                    $prices1 = DB::Table('price_products')
+                        ->select('price', 'count', 'idTypePriceProduct', 'nameTypePrice', 'price_products.id')
+                        ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
+                        ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
+                        ->where([['productos.id', '=', $product->id], ['nameTypePrice', 'like', '%1 Cara']])
+                        ->orderBy(DB::raw('ABS(price_products.count)'), 'asc')
+                        ->get();
+                    //dd($prices1);
+                    $prices2 = DB::Table('price_products')
+                        ->select('price', 'count', 'idTypePriceProduct', 'nameTypePrice', 'price_products.id')
+                        ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
+                        ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
+                        ->where([['productos.id', '=', $product->id], ['nameTypePrice', 'like', '%2 Caras']])
+                        ->orderBy(DB::raw('ABS(price_products.count)'), 'asc')
+                        ->orderBy('type_price_products.id', 'asc')
+                        ->get();
+                } else if ($product->id == 22) {
+                    $prices = DB::Table('price_products')
+                        ->select('price', 'count', 'idTypePriceProduct', 'nameTypePrice', 'price_products.id')
+                        ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
+                        ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
+                        ->where('productos.id', '=', $product->id)
+                        ->groupBy('price', 'nameTypePrice')
+                        ->orderBy(DB::raw('ABS(count)'), 'asc')
+                        ->orderBy('type_price_products.id', 'asc')
+                        ->get();
+                } else {
+                    $prices = DB::Table('price_products')
+                        ->select('price', 'count', 'idTypePriceProduct', 'nameTypePrice', 'price_products.id')
+                        ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
+                        ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
+                        ->where('productos.id', '=', $product->id)
+                        ->groupBy('price', 'nameTypePrice')
+                        ->orderBy(DB::raw('LENGTH(price_products.count),ABS(count)'), 'asc')
+                        ->orderBy('type_price_products.id', 'asc')
+                        ->get();
+                }
+
+
+                $uds = [];
+                $uds1 = [];
+                $uds2 = [];
+
+                if ($product->id == 7 || $product->id == 37) {
+                    $tipoSelect1 = [];
+                    $y = 0;
+                    foreach ($typePrice1 as $type) {
+                        if ($y == 0) {
+                            $tipoSelect1[] = 'Medidas (cm)';
+                            $y++;
+                        }
+                        $tipoSelect1[] = $type->nameTypePrice;
+                    }
+
+                    $x = 0;
+                    $i = 0;
+                    foreach ($prices1 as $price) {
+                        if ($i == 0) {
+                            $uds1[$x][$i] = ['name' => $price->nameTypePrice, 'price' => $price->count, 'type' => 'info'];
+                            $i++;
+                        }
+                        $uds1[$x][$i] = ['name' => $price->nameTypePrice, 'price' => $price->price, 'type' => 'precio', 'count' => $price->count, 'idPriceProduct' => $price->id];
+                        $i++;
+                        if ($i % count($tipoSelect1) == 0) {
+                            $x++;
+                            $i = 0;
                         }
                     }
-                    $type->prices = $sameType;
+                    $tipoSelect2 = [];
+                    $y = 0;
+                    foreach ($typePrice2 as $type) {
+                        if ($y == 0) {
+                            $tipoSelect2[] = 'Medidas (cm)';
+                            $y++;
+                        }
+                        $tipoSelect2[] = $type->nameTypePrice;
+                    }
+                    $x = 0;
+                    $i = 0;
+                    foreach ($prices2 as $price) {
+                        if ($i == 0) {
+                            $uds2[$x][$i] = ['name' => $price->nameTypePrice, 'price' => $price->count, 'type' => 'info'];
+                            $i++;
+                        }
+                        $uds2[$x][$i] = ['name' => $price->nameTypePrice, 'price' => $price->price, 'type' => 'precio', 'count' => $price->count, 'idPriceProduct' => $price->id];
+                        $i++;
+                        if ($i % count($tipoSelect2) == 0) {
+                            $x++;
+                            $i = 0;
+                        }
+                    }
+                } else {
+
+                    $tipoSelect = [];
+                    $y = 0;
+                    foreach ($typePrice as $type) {
+                        if ($y == 0) {
+                            if (strpos($type->nameTypePrice, 'cm') != false || strpos($type->nameTypePrice, 'mm') != false) {
+                                if (strpos($type->nameTypePrice, 'mm') != false) {
+                                    $tipoSelect[] = 'Medidas (mm)';
+                                } else {
+                                    $tipoSelect[] = 'Medidas (cm)';
+                                }
+                            } else {
+                                $tipoSelect[] = 'Cantidad';
+                            }
+                            $y++;
+                        }
+                        $tipoSelect[] = $type->nameTypePrice;
+                    }
+
+                    $x = 0;
+                    $i = 0;
+                    foreach ($prices as $price) {
+                        if ($i == 0) {
+                            $uds[$x][$i] = ['name' => $price->nameTypePrice, 'price' => $price->count, 'type' => 'info'];
+                            $i++;
+                        }
+                        $uds[$x][$i] = ['name' => $price->nameTypePrice, 'price' => $price->price, 'type' => 'precio', 'count' => $price->count, 'idPriceProduct' => $price->id];
+                        $i++;
+                        if ($i % count($tipoSelect) == 0) {
+                            $x++;
+                            $i = 0;
+                        }
+                    }
                 }
+
+                if (HelperProduct::esOferta($product->id)) {
+                    return view('ofertas/ofertas_index', ['id' => $request->id,
+                        'categoria' => $category,
+                        'producto' => $product,
+                        'typePrice' => $typePrice,
+                        'uds' => $uds,
+                        'keys' => $tipoSelect,
+                        'title' => $product->name,
+                        'cart' => Cart::content(),
+                        'categorias' => $categorias]);
+                }
+
+
                 switch ($product->id) {
+                    case 23:
+                    case 72:
+                    case 76:
+                    case 77:
+                    case 79:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 43:
+                    case 24:
+                    case 64:
+                    case 65:
+                    case 66:
+                    case 67:
+                    case 68:
+                    case 69:
+                    case 70:
+                        return view('productos/presupuesto', ['id' => $request->id,
+                            'categoria' => $category,
+                            'producto' => $product,
+                            'title' => $product->name,
+                            'cart' => Cart::content(),
+                            'categorias' => $categorias]);
+                        break;
                     case 4:/*es presupuesto */
                         return view('productos/tarjetaPlasticaPresupuesto', ['id' => $request->id,
                             'categoria' => $category,
@@ -75,11 +259,26 @@ class ProductoController extends Controller
                         break;
                     case 31:
                         return view('productos/viniloCortePresupuesto', ['id' => $request->id,
-                        'categoria' => $category,
-                        'producto' => $product,
-                        'title' => $product->name,
-                        'cart' => Cart::content(),
-                        'categorias' => $categorias]);
+                            'categoria' => $category,
+                            'producto' => $product,
+                            'title' => $product->name,
+                            'cart' => Cart::content(),
+                            'categorias' => $categorias]);
+                        break;
+                    case 7:
+                    case 37:
+                        return view('productos/product_normal', ['id' => $request->id,
+                            'categoria' => $category,
+                            'producto' => $product,
+                            'title' => $product->name,
+                            'cart' => Cart::content(),
+                            'categorias' => $categorias,
+                            'typePrice' => $typePrice,
+                            'uds1' => $uds1,
+                            'uds2' => $uds2,
+                            'keys1' => $tipoSelect1,
+                            'keys2' => $tipoSelect2]);
+                        break;
                     default:
                         return view('productos/product_normal', ['id' => $request->id,
                             'categoria' => $category,
@@ -87,8 +286,10 @@ class ProductoController extends Controller
                             'title' => $product->name,
                             'cart' => Cart::content(),
                             'categorias' => $categorias,
-                            'typePrice' => $typePrice,]);
-                    break;
+                            'typePrice' => $typePrice,
+                            'uds' => $uds,
+                            'keys' => $tipoSelect]);
+                        break;
                 }
             }
         }
@@ -101,7 +302,12 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        return view('administracion/productos/todas', ['title' => 'Productos', 'products' => DB::table('productos')->select('name', 'cover')->paginate(10)]);
+        return view('administracion/productos/todas', ['title' => 'Productos', 'products' => DB::table('productos')->select('name', 'cover')->where('product_is_active', 1)->paginate(10)]);
+    }
+
+    public function indexOfertas()
+    {
+        return view('administracion/offers/listadoOfertas', ['title' => 'Ofertas', 'products' => DB::table('productos')->select('id', 'name', 'cover')->where(['product_is_active' => 1, 'is_offer' => 1])->paginate(10)]);
     }
 
     public function getNuevoProducto()
@@ -114,44 +320,51 @@ class ProductoController extends Controller
 
     }
 
+    public function getNuevaOferta()
+    {
+        return view('administracion/offers/nueva_oferta', [
+            'title' => 'Nueva oferta',
+            'oferta' => DB::table('categories')->select('id')->where(['name' => 'Ofertas', 'category_is_active' => 1])->first()->id
+        ]);
+
+    }
+
     public function getBorrarProducto($id = null)
     {
         if ($id != null) {
-            $isBudget = $this->helperProduct->esPresupuesto($id);
-            if (!$isBudget) {
-                $typePriceProducts = DB::table('type_price_products')->select('id')->where(['idProduct' => $id])->get();
-                $totalTypePricesProductToRemove = count($typePriceProducts);
-                $totalPricesToRemove = 0;
-                $confirmDeleteTypePrice = 0;
-                $confirmDeletePrice = 0;
-                foreach ($typePriceProducts as $typePriceProduct) {
-                    $prices = DB::table('price_products')->select('id')->where(['idTypePriceProduct' => $typePriceProduct->id])->get();
-                    $totalPricesToRemove += count($prices);
-                    foreach ($prices as $price) {
-                        $confirmDeletePrice += PriceProduct::destroy($price->id);
-                    }
-                    $confirmDeleteTypePrice += TypePriceProduct::destroy($typePriceProduct->id);
-                }
-                if ($totalTypePricesProductToRemove == $confirmDeleteTypePrice && $totalPricesToRemove == $confirmDeletePrice) {
-                    $images = DB::table('productos')->select('cover', 'image')->where(['id' => $id])->first();
-                    $dir = 'public/productos/';
-                    $removeImages = Storage::delete([$dir . $images->cover, $dir . $images->image]);
-                    if (!$removeImages) {
-                        return redirect()->to('admin/producto/borrar')->with(['failProduct' => 'Fallo al borrar la imagenes asociadas al producto']);
-                    }
-                } else {
-                    return redirect()->to('admin/producto/borrar')->width(['failProduct' => 'Fallo al borrar los precios y acabados asociados con el producto']);
-                }
-            }
-            $remove = Producto::destroy($id);
-            if ($remove == 1) {
-                return redirect()->to('admin/producto/borrar')->with(['successProduct' => 'Producto borrado satisfactoriamente']);
+            $product = Producto::find($id);
+            $product->product_is_active = 0;
+            $product->deleted_by_user_id = Auth::id();
+            $product->deleted_at = Carbon::now('Europe/Madrid');
+            $status = $product->save();
+            if ($status) {
+                return redirect()->back()->with(['successProduct' => 'Producto borrado satisfactoriamente']);
             } else {
-                return redirect()->to('admin/producto/borrar')->with(['failProduct' => 'Fallo al borrar el producto']);
+                return redirect()->back()->with(['failProduct' => 'Fallo al borrar el producto']);
             }
         } else {
-            return view('administracion/productos/eliminar_producto', ['title' => 'Editar Categor&iacute;as',
-                'products' => DB::table('productos')->select('name', 'cover', 'id')->paginate(17)]);
+            return view('administracion/productos/eliminar_producto', ['title' => 'Borrar Productos',
+                'products' => DB::table('productos')->select('name', 'cover', 'id')->where('product_is_active', 1)->paginate(17)]);
+        }
+    }
+
+
+    public function getBorrarOferta($id = null)
+    {
+        if ($id != null) {
+            $product = Producto::find($id);
+            $product->product_is_active = 0;
+            $product->deleted_by_user_id = Auth::id();
+            $product->deleted_at = Carbon::now('Europe/Madrid');
+            $status = $product->save();
+            if ($status) {
+                return redirect()->back()->with(['successOffer' => 'Oferta borrada satisfactoriamente']);
+            } else {
+                return redirect()->back()->with(['failOffer' => 'Fallo al borrar la oferta']);
+            }
+        } else {
+            return view('administracion/offers/eliminar_oferta', ['title' => 'Eliminar Ofertas',
+                'products' => DB::table('productos')->select('name', 'cover', 'id')->where(['product_is_active' => 1, 'is_offer' => 1])->paginate(17)]);
         }
     }
 
@@ -160,11 +373,97 @@ class ProductoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public
-    function newpresupuesto(Request $request)
+    public function newpresupuesto(Request $request)
     {
-        $presupuesto = new Presupuesto($request->all());
+        /*------ tarjeta plastica presupuesto -------------*/
+        if ($request->has('cantidad')) {
+            $data["Cantidad"] = $request->get('cantidad');
+        }
+
+        if ($request->has('caras')) {
+            if ($request->get('caras') == "1") {
+                $data["Num. Caras"] = "1";
+            } else {
+                $data["Num. Caras"] = "2";
+            }
+        }
+
+        if ($request->has('numeracion')) {
+            if ($request->get('numeracion') == "si") {
+                $data["Numeración"] = "Si";
+            } else {
+                $data["Numeración"] = "No";
+            }
+        }
+
+        if ($request->has('fotografia')) {
+            if ($request->get('fotografia') == "si") {
+                $data["Fotografía"] = "Si";
+            } else {
+                $data["Fotografía"] = "No";
+            }
+        }
+
+        if ($request->has('full_name')) {
+            if ($request->get('full_name') == "si") {
+                $data["Nombre Completo"] = "Si";
+            } else {
+                $data["Nombre Completo"] = "No";
+            }
+        }
+
+        if ($request->has('codBarras')) {
+            if ($request->get('codBarras') == "si") {
+                $data["Cod. Barras"] = "Si";
+            } else {
+                $data["Cod. Barras"] = "No";
+            }
+        }
+
+        if ($request->has('coercitividad')) {
+            switch ($request->get('coercitividad')) {
+                case "no":
+                    $data["Banda Magnética"] = "No";
+                    break;
+                case "alta":
+                    $data["Banda Magnética"] = "Alta Coercitividad";
+                    break;
+                case "baja":
+                    $data["Banda Magnética"] = "Baja Coercitividad";
+                    break;
+
+            }
+        }
+        /*--------------------------------------------*/
+        /*------ vinilo corte presupuesto -------------*/
+        $data = "";
+
+        if ($request->has('medidas')) {
+            $data["Medidas"] = $request->get('medidas');
+        }
+
+        if ($request->has('tipo')) {
+            if ($request->get('tipo')) {
+                $data["Tipo"] = "Exterior";
+            } else {
+                $data["tipo"] = "Interior";
+            }
+        }
+
+        /*--------------------------------------------*/
+
+        if (is_string($data)) {
+            $dataPresupuesto = $request->all();
+        } else {
+            $data = serialize($data);
+            $dataPresupuesto = ['nombre' => $request->get('nombre'), 'telefono' => $request->get('telefono'), 'email' => $request->get('email'), 'comentario' => $request->get('comentario'),
+                'idProducto' => $request->get('idProducto'), 'empresa' => $request->get('empresa'), 'provincia' => $request->get('provincia'), 'dataAboutIt' => $data];
+        }
+
+        $presupuesto = new Presupuesto($dataPresupuesto);
         $status = $presupuesto->save();
+        $infoProducto = DB::table('productos')->select('name')->where('id', '=', $request->get('idProducto'))->first();
+        Mail::to('printcolor@printcolorillora.com')->send(new EnviarPresupuesto($presupuesto, $infoProducto->name));
         if ($status) {
             return redirect()->back()->with('presupuestoOK', '');
         } else {
@@ -172,8 +471,7 @@ class ProductoController extends Controller
         }
     }
 
-    public
-    function saveNewProduct(Request $request)
+    public function saveNewProduct(Request $request)
     {
         $mycover = Storage::putFile('public/productos', new File($request->file('cover')));
         $myimage = Storage::putFile('public/productos', new File($request->file('inside')));
@@ -182,7 +480,9 @@ class ProductoController extends Controller
             'name' => $request->get('nombre'),
             'cover' => str_replace('public/productos/', '', $mycover),
             'image' => str_replace('public/productos/', '', $myimage),
-            'description' => $request->get('descripcion')
+            'description' => $request->get('descripcion'),
+            'footer_image' => $request->get('footer_image'),
+            'is_offer' => 0
         ]);
         $status = $prod->save();
         if ($status) {
@@ -192,16 +492,41 @@ class ProductoController extends Controller
         }
     }
 
+    public function saveNewOffer(Request $request)
+    {
+        $mycover = Storage::putFile('public/ofertas', new File($request->file('cover')));
+        $prod = New Producto([
+            'idCategoria' => $request->get('idCategoria'),
+            'name' => $request->get('nombre'),
+            'cover' => str_replace('public/ofertas/', '', $mycover),
+            'is_offer' => 1,
+            'description' => $request->get('descripcion'),
+        ]);
+        $status = $prod->save();
+        if ($status) {
+            return back()->with('successNewOferta', 'Nueva oferta creada');
+        } else {
+            return back()->withErrors();
+        }
+    }
+
 
     public
     function saveeditprod(Request $request)
     {
-        $mycover = Storage::putFile('public/productos', new File($request->file('cover')));
-        $cat = Category::find($request->get('id'));
-        $cat->name = $request->get('nombre');
-        $cat->name_xs = $request->get('nombreBreve');
-        $cat->image = str_replace('public/productos/', '', $mycover);
-        $status = $cat->save();
+        $prod = Producto::find($request->get('id'));
+        $prod->name = $request->get('nombre');
+        $prod->footer_image = $request->get('footer_image');;
+        $prod->description = $request->get('description');
+        if (empty($prod->cover) && $request->hasFile('cover')) {
+            $mycover = Storage::putFile('public/productos', new File($request->file('cover')));
+            $prod->cover = str_replace('public/productos/', '', $mycover);
+        }
+        if (empty($prod->image) && $request->hasFile('myimage')) {
+            $myimage = Storage::putFile('public/productos', new File($request->file('myimage')));
+            $prod->image = str_replace('public/productos/', '', $myimage);
+        }
+        $status = $prod->save();
         if ($status) {
             return back()->with('successEditProduct', 'Producto actualizado correctamente');
 
@@ -212,27 +537,91 @@ class ProductoController extends Controller
 
     }
 
+    public
+    function saveeditofer(Request $request)
+    {
+        $prod = Producto::find($request->get('id'));
+        $prod->name = $request->get('nombre');
+        $prod->footer_image = $request->get('footer_image');;
+        $prod->description = $request->get('description');
+        if (empty($prod->cover) && $request->hasFile('cover')) {
+            $mycover = Storage::putFile('public/ofertas', new File($request->file('cover')));
+            $prod->cover = str_replace('public/ofertas/', '', $mycover);
+        }
+        $status = $prod->save();
+        if ($status) {
+            return back()->with('successEditOfer', 'Oferta actualizada correctamente');
+
+        } else {
+            return back()->withErrors();
+
+        }
+
+    }
 
     public
     function getEditarProducto()
     {
         return view('administracion/productos/editar_producto',
             [
-                'title' => 'Editar Categor&iacute;as',
-                'products' => DB::table('productos')->select('name', 'cover', 'id')->paginate(17)
+                'title' => 'Editar Productos',
+                'productsWithoutImage' => DB::table('productos')->select('*')->where(['image' => '', 'product_is_active' => 1, 'is_offer' => 0])->orWhere(['cover' => ''])->where(['product_is_active' => 1, 'is_offer' => 0])->get(),
+                'products' => DB::table('productos')->select('name', 'cover', 'id')->where(['product_is_active' => 1, 'is_offer' => '0'])->paginate(17)
             ]);
     }
 
     public
     function getEditarProductWithId($id)
     {
+        if (DB::table('productos')->select('*')->where(['id' => $id])->first()->product_is_active == 0) {
+            return abort('404');
+        }
         $producto = DB::table('productos')->select('*')->where(['id' => $id])->first();
         $typePrice = DB::table('type_price_products')->select('nameTypePrice', 'id')->where(['idProduct' => $id])->get();
         $prices = DB::Table('price_products')
             ->select('price', 'count', 'idTypePriceProduct', 'price_products.id')
             ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
             ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
-            ->where(['productos.id' => $id])->orderBy('count', 'asc')->get();
+            ->where(['productos.id' => $id])->orderBy(DB::raw('ABS(count)'), 'asc')->get();
+        $tipoSelect = [];
+        $totalItems = 0;
+
+        foreach ($typePrice as $type) {
+            $tipoSelect[$type->id] = $type->nameTypePrice;
+            $sameType = [];
+            foreach ($prices as $price) {
+                if ($price->idTypePriceProduct == $type->id) {
+                    array_push($sameType, $price);
+                }
+            }
+            $type->prices = $sameType;
+            $totalItems += count($type->prices);
+
+        }
+
+        return view('administracion/productos/editar_producto_id',
+            [
+                'tipoSelect' => $tipoSelect,
+                'typePrice' => $typePrice,
+                'title' => 'Editar ' . $producto->name,
+                'producto' => $producto,
+                'totalItems' => $totalItems
+            ]);
+    }
+
+    public
+    function getEditarOferta($id)
+    {
+        if (DB::table('productos')->select('*')->where(['id' => $id, 'is_offer' => 1])->first()->product_is_active == 0) {
+            return abort('404');
+        }
+        $producto = DB::table('productos')->select('*')->where(['id' => $id, 'is_offer' => 1])->first();
+        $typePrice = DB::table('type_price_products')->select('nameTypePrice', 'id')->where(['idProduct' => $id])->get();
+        $prices = DB::Table('price_products')
+            ->select('price', 'count', 'idTypePriceProduct', 'price_products.id')
+            ->join('type_price_products', 'price_products.idTypePriceProduct', '=', 'type_price_products.id')
+            ->join('productos', 'type_price_products.idProduct', '=', 'productos.id')
+            ->where(['productos.id' => $id, 'is_offer' => 1])->orderBy(DB::raw('ABS(count)'), 'asc')->get();
         $tipoSelect = [];
         foreach ($typePrice as $type) {
             $tipoSelect[$type->id] = $type->nameTypePrice;
@@ -244,7 +633,7 @@ class ProductoController extends Controller
             }
             $type->prices = $sameType;
         }
-        return view('administracion/productos/editar_producto_id',
+        return view('administracion/offers/editar_oferta_id',
             [
                 'tipoSelect' => $tipoSelect,
                 'typePrice' => $typePrice,
@@ -254,15 +643,37 @@ class ProductoController extends Controller
     }
 
     public
-    function removeImageFromProduct($id, $image)
+    function removeImageFromProduct($type, $id, $image)
     {
         $successDeleteFile = Storage::delete('public/productos/' . $image);
         if ($successDeleteFile) {
             $product = Producto::find($id);
-            $product->image = '';
+            if ($type == 'cover') {
+                $product->cover = '';
+            } else {
+                $product->image = '';
+            }
             $status = $product->save();
             if ($status) {
                 return redirect()->back()->with('successDeleteImageProduct', 'Se ha eliminado correctamente la imagen');
+            } else {
+                return redirect()->back()->withErrors();
+            }
+        } else {
+            return redirect()->back()->withErrors();
+        }
+    }
+
+    public
+    function removeImageFromOffer($id, $image)
+    {
+        $successDeleteFile = Storage::delete('public/ofertas/' . $image);
+        if ($successDeleteFile) {
+            $product = Producto::find($id);
+            $product->cover = '';
+            $status = $product->save();
+            if ($status) {
+                return redirect()->back()->with('successDeleteImageOffer', 'Se ha eliminado correctamente la imagen');
             } else {
                 return redirect()->back()->withErrors();
             }

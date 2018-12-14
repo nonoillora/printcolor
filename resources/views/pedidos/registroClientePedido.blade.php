@@ -73,7 +73,7 @@
         <p><b>IVA (21%): {{Cart::tax()}}€</b></p>
 
         <p><b>IMPORTE TOTAL: {{Cart::total()}}€ (IVA incluido)</b></p>
-        {!! Form::hidden('totalPedido',Cart::total()) !!}
+        {!! Form::hidden('totalPedido',Cart::total(),['id'=>'priceTotalOrder']) !!}
         <br/>
         Por ahora el método de pago es <b>transferencia bancaria</b>, recibirá un correo donde se le explica cómo
         realizar el pago y el identificador del pedido,
@@ -108,7 +108,7 @@
                         return actions.payment.create({
                             transactions: [{
                                 amount: {
-                                    total: '0.01',
+                                    total: {{Cart::total()}},
                                     currency: 'EUR'
                                 }
                             }]

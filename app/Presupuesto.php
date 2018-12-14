@@ -8,6 +8,6 @@ class Presupuesto extends Model
 {
     protected $table = 'presupuestos';
     protected $fillable = [
-        'nombre', 'telefono', 'email', 'comentario', 'idProducto', 'empresa', 'provincia'
+        'nombre', 'telefono', 'email', 'comentario', 'respondido','idProducto', 'empresa', 'provincia','dataAboutIt'
     ];
 }
