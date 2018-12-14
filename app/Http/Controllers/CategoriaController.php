@@ -14,7 +14,7 @@ class CategoriaController extends Controller
     public function getCategory(Request $request)
     {
         $category = DB::table('categories')->select('name')->where('id', $request->id)->first();
-        if (count($category) == 0) {
+        if (!isset($category)) {
             abort('404');
         }
         $categorias = DB::table('categories')->select('*')->get();

@@ -27,7 +27,7 @@ class ProductoController extends Controller
     {
         $categorias = DB::table('categories')->select('*')->get();
         $product = DB::table('productos')->select('*')->where('id', $request->id)->first();
-        if (count($product) == 0 || $product == [] || $product == null) {
+        if (!isset($product)|| $product == [] || $product == null) {
             abort('404');
         } else {
             $category = DB::table('categories')->select('name', 'id')->where('id', $product->idCategoria)->first();
