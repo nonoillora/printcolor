@@ -146,7 +146,7 @@ Route::get('getFile/{type}/{file}', 'FicherosController@getFile');
 
 
 Route::group([], function () {
-    Route::get('cesta', 'CarroController@getIndex');
+    Route::get('cesta', 'CarroController@getIndex')->name('cesta');
     Route::get('quitarProducto/{id}', 'CarroController@quitarProducto');
     Route::get('clearCart', 'CarroController@destroyCart');
     Route::get('confirmacion-pedido', 'ClienteController@getRegistroClientePedido');

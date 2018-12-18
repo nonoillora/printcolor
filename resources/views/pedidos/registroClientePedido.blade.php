@@ -74,6 +74,8 @@
 
         <p><b>IMPORTE TOTAL: {{Cart::total()}}€ (IVA incluido)</b></p>
         {!! Form::hidden('totalPedido',Cart::total(),['id'=>'priceTotalOrder']) !!}
+        {!! Form::hidden('isPaidOrder',0,['id'=>'isPaidOrder']) !!}
+
         <br/>
         Por ahora el método de pago es <b>transferencia bancaria</b>, recibirá un correo donde se le explica cómo
         realizar el pago y el identificador del pedido,
@@ -86,7 +88,7 @@
 
         <div class="clearfix"></div>
         <div>
-            <div id="paypal-button" class="col-lg-6 center-block text-center" data-content="Paypal" data-id="2"></div>
+            <div id="paypal-button" class="col-lg-6 center-block text-center hidden" data-content="Paypal" data-id="2"></div>
             <script src="https://www.paypalobjects.com/api/checkout.js"></script>
             <script>
                 paypal.Button.render({
@@ -118,6 +120,7 @@
                     onAuthorize: function (data, actions) {
                         return actions.payment.execute()
                                 .then(function () {
+                                    $('#isPaidOrder').val('1');
                                     // Show a confirmation message to the buyer
                                     window.alert('Thank you for your purchase!');
                                 });
@@ -126,17 +129,17 @@
 
             </script>
         </div>
-        <div class="col-lg-6 center-block text-center" id="trans_bancaria" data-content="Transferencia Bancaria" data-id="1">
+        <div class="col-lg-12 center-block text-center alert alert-success" id="trans_bancaria" data-content="Transferencia Bancaria" data-id="1">
             <span class="glyphicon glyphicon-transfer"></span>
             Transferencia Bancaria
         </div>
         <div class="clearfix"></div>
-        <div class="alert alert-warning" id="divMethodPayUser">
+        <div class="alert alert-warning hidden" id="divMethodPayUser">
             Metodo seleccionado: <span id="methodPayUserSelect">Ninguno</span>
-          {!! Form::hidden('methodPayUserSelectInput',null,['id'=>'methodPayUserSelectInput','required'=>'required']) !!}
+          {!! Form::hidden('methodPayUserSelectInput','1',['id'=>'methodPayUserSelectInput','required'=>'required']) !!}
         </div>
 
-        {!! Form::submit('Finalizar pedido',['class'=>'form-control btn btn-success','disabled'=>'disabled','id'=>'submitRegisterOrder']) !!}
+        {!! Form::submit('Finalizar pedido',['class'=>'form-control btn btn-success','id'=>'submitRegisterOrder']) !!}
         {!! Form::close() !!}
     </div>
 

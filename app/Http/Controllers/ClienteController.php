@@ -21,7 +21,11 @@ class ClienteController extends Controller
 
     public function getRegistroClientePedido()
     {
-        return view('pedidos/registroClientePedido', ['title' => 'Confirmaci&oacute;n del pedido', 'total' => Cart::total()]);
+        if (Cart::content()->count() == 0) {
+            return redirect()->route('cesta');
+        } else {
+            return view('pedidos/registroClientePedido', ['title' => 'Confirmaci&oacute;n del pedido', 'total' => Cart::total()]);
+        }
     }
 
     /**
