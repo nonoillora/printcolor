@@ -36,8 +36,8 @@ class PedidoController extends Controller
 
     public function pedidosPendientes()
     {
-        $pedidos = Pedido::where(['isPaid'=>0,'isSent'=>0])->whereNull('sent_at')->whereNull('paid_at')->orderBy('created_at', 'DESC')->paginate(13);
-        return view('administracion/pedidos/pendientes', ['title' => 'Pedidos Pendientes', 'pedidos'=>$pedidos]);
+        $pedidos = Pedido::where(['isPaid' => 0, 'isSent' => 0])->whereNull('sent_at')->whereNull('paid_at')->orderBy('created_at', 'DESC')->paginate(13);
+        return view('administracion/pedidos/pendientes', ['title' => 'Pedidos Pendientes', 'pedidos' => $pedidos]);
     }
 
     public function getRegistroClientePedido()
@@ -111,47 +111,47 @@ class PedidoController extends Controller
      */
     public function store(Request $request)
     {
-        $cliente = ClienteController::saveNewClient($request);
-        $statusC = $cliente->status;
-        $lineas = LineaPedido::where(['session_id' => $request->session()->getId()])->orderBy('updated_at', 'ASC')->get();
-        $lines = array();
-        foreach ($lineas as $linea) {
-            array_push($lines, $linea->id);
-        }
+            $cliente = ClienteController::saveNewClient($request);
+            $statusC = $cliente->status;
+            $lineas = LineaPedido::where(['session_id' => $request->session()->getId()])->orderBy('updated_at', 'ASC')->get();
+            $lines = array();
+            foreach ($lineas as $linea) {
+                array_push($lines, $linea->id);
+            }
 
-        $dataPedido = array('idCliente' => $cliente->id,
-            'idLineas' => serialize($lines),
-            'idTipoPago' => '1',
-            'totalPedido' => $request->get('totalPedido'),
-            'numIdentificacionPedido' => Uuid::generate(),
-            'totalIVA' => Cart::tax(),
-            'withoutIVA' => Cart::subtotal());
-        $pedido = new Pedido($dataPedido);
-        $statusP = $pedido->save();
-        if ($statusC & $statusP) {
-            Cart::destroy();
-            $request->session()->regenerate();
-            $lineas = DB::table('linea_pedidos')
-                ->select('*')
-                ->whereIn('id', unserialize(DB::table('pedidos')->select('idLineas')->where('idPedido', $pedido->idPedido)->first()->idLineas))
-                ->get();
-            $numFac = DB::table('pedidos')->where('created_at','like',date('Y').'-%')->count();
-            $factura = new Factura(array('idPedido'=>$pedido->idPedido,'numeracionFactura'=>$numFac.'/'.date('y')));
-            $factura->save();
-            Mail::to($cliente->email)->send(new newOrderUser($pedido, $cliente, $lineas, $factura));
-            Mail::to(HelperConfig::getConfig('_EMAIL_SEND_NOTIFICATION_OWN'))->send(new newOrder($pedido, $cliente, $lineas,$factura));
-            $statusSavePDF = Helper::saveBillPDF($pedido->idPedido);
-            return view('pedidos/orderSuccessRegistered', ['title' => 'Pedido Registrado']);
-        } else {
-            if ($statusP && !$statusC) {
-                dd('fallo cliente');
+            $dataPedido = array('idCliente' => $cliente->id,
+                'idLineas' => serialize($lines),
+                'idTipoPago' => '1',
+                'totalPedido' => $request->get('totalPedido'),
+                'numIdentificacionPedido' => Uuid::generate(),
+                'totalIVA' => Cart::tax(),
+                'withoutIVA' => Cart::subtotal());
+            $pedido = new Pedido($dataPedido);
+            $statusP = $pedido->save();
+            if ($statusC & $statusP) {
+                Cart::destroy();
+                $request->session()->regenerate();
+                $lineas = DB::table('linea_pedidos')
+                    ->select('*')
+                    ->whereIn('id', unserialize(DB::table('pedidos')->select('idLineas')->where('idPedido', $pedido->idPedido)->first()->idLineas))
+                    ->get();
+                $numFac = DB::table('pedidos')->where('created_at', 'like', date('Y') . '-%')->count();
+                $factura = new Factura(array('idPedido' => $pedido->idPedido, 'numeracionFactura' => $numFac . '/' . date('y')));
+                $factura->save();
+                Mail::to($cliente->email)->send(new newOrderUser($pedido, $cliente, $lineas, $factura));
+                Mail::to(HelperConfig::getConfig('_EMAIL_SEND_NOTIFICATION_OWN'))->send(new newOrder($pedido, $cliente, $lineas, $factura));
+                $statusSavePDF = Helper::saveBillPDF($pedido->idPedido);
                 return view('pedidos/orderSuccessRegistered', ['title' => 'Pedido Registrado']);
+            } else {
+                if ($statusP && !$statusC) {
+                    dd('fallo cliente');
+                    return view('pedidos/orderSuccessRegistered', ['title' => 'Pedido Registrado']);
+                }
+                if (!$statusP && $statusC) {
+                    dd('fallo pedido');
+                    return view('pedidos/orderSuccessRegistered', ['title' => 'Fa']);
+                }
             }
-            if (!$statusP && $statusC) {
-                dd('fallo pedido');
-                return view('pedidos/orderSuccessRegistered', ['title' => 'Fa']);
-            }
-        }
     }
 
     /**
@@ -176,34 +176,38 @@ class PedidoController extends Controller
         //
     }
 
-    public function setNumSeguimiento(Request $request){
+    public function setNumSeguimiento(Request $request)
+    {
         $pedido = Pedido::find($request->get('idPedido'));
         $pedido->num_seguimiento = $request->get('numSeguimiento');
         $pedido->updated_at = Carbon::now('Europe/Madrid');
         $status = $pedido->save();
-        return response()->json(['status'=>$status]);
+        return response()->json(['status' => $status]);
     }
 
 
-    public function setPaid(Request $request){
+    public function setPaid(Request $request)
+    {
         $pedido = Pedido::find($request->get('idPedido'));
         $pedido->isPaid = 1;
         $now = Carbon::now('Europe/Madrid');
         $pedido->updated_at = $now;
         $pedido->paid_at = $now;
         $status = $pedido->save();
-        return response()->json(['status'=>$status, 'paid_at'=>$now->toDateTimeString()]);
+        return response()->json(['status' => $status, 'paid_at' => $now->toDateTimeString()]);
     }
 
-    public function setIsSent(Request $request){
+    public function setIsSent(Request $request)
+    {
         $pedido = Pedido::find($request->get('idPedido'));
         $pedido->isSent = 1;
         $now = Carbon::now('Europe/Madrid');
         $pedido->updated_at = $now;
         $pedido->sent_at = $now;
         $status = $pedido->save();
-        return response()->json(['status'=>$status, 'sent_at'=>$now->toDateTimeString()]);
+        return response()->json(['status' => $status, 'sent_at' => $now->toDateTimeString()]);
     }
+
     /**
      * Update the specified resource in storage.
      *
@@ -273,13 +277,15 @@ class PedidoController extends Controller
         //return $dompdf->download('invoice.pdf');
     }
 
-    public function getIsSent(){
-        $pedidos = Pedido::where(['isSent'=>1])->orderBy('created_at', 'DESC')->paginate(13);
-        return view('administracion/pedidos/listadoPedidosEnviados',['title'=>'Pedidos Enviados','pedidos' => $pedidos]);
+    public function getIsSent()
+    {
+        $pedidos = Pedido::where(['isSent' => 1])->orderBy('created_at', 'DESC')->paginate(13);
+        return view('administracion/pedidos/listadoPedidosEnviados', ['title' => 'Pedidos Enviados', 'pedidos' => $pedidos]);
     }
 
-    public function getNoPaid(){
-        $pedidos = Pedido::where(['isPaid'=>0])->orderBy('created_at', 'DESC')->paginate(13);
-        return view('administracion/pedidos/listadoPedidosNoPagados',['title'=>'Pedidos no pagados','pedidos' => $pedidos]);
+    public function getNoPaid()
+    {
+        $pedidos = Pedido::where(['isPaid' => 0])->orderBy('created_at', 'DESC')->paginate(13);
+        return view('administracion/pedidos/listadoPedidosNoPagados', ['title' => 'Pedidos no pagados', 'pedidos' => $pedidos]);
     }
 }

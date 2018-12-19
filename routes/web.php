@@ -153,6 +153,10 @@ Route::group([], function () {
     Route::get('realizar-pago-pedido', 'PedidoController@getrealizarPagoPedido');
     Route::post('pedido-finalizado', 'PedidoController@getPedidoFinalizado');
     Route::post('finished_order', 'PedidoController@store');
+    /*avoid reload page finish order*/
+    Route::get('finished_order', function(){
+        return redirect()->to('cesta');
+    });
 });
 
 Route::get('/home', 'HomeController@index');
