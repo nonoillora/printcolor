@@ -2,10 +2,14 @@
 
 namespace App\Mail;
 
+use App\CompanyShipping;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Pedido;
+use App\Cliente;
 
 class OrderSent extends Mailable
 {
@@ -13,7 +17,7 @@ class OrderSent extends Mailable
     public $pedido;
     public $cliente;
     public $lineas;
-    public $factura;
+    public $companyShipping;
 
 
     /**
@@ -21,12 +25,12 @@ class OrderSent extends Mailable
      *
      * @return void
      */
-    public function __construct(Pedido $pedido,Cliente $cliente, Collection $lineas,Factura $factura)
+    public function __construct(Pedido $pedido, Cliente $cliente, Collection $lineas, CompanyShipping $company)
     {
         $this->pedido = $pedido;
         $this->cliente = $cliente;
         $this->lineas = $lineas;
-        $this->factura = $factura;
+        $this->companyShipping = $company;
     }
 
     /**
@@ -36,6 +40,6 @@ class OrderSent extends Mailable
      */
     public function build()
     {
-        return $this->view('notificationsMail.orderSent')->subject('Tu pedido {idpedido} ha sido enviado');
+        return $this->view('notificationsMail.orderSent')->subject('Tu pedido ' . $this->pedido->idpedido . ' ha sido enviado');
     }
 }

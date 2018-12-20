@@ -3,9 +3,9 @@
  */
 $(document).ready(function () {
     var url = "";
-    if(window.location.host=="localhost"){
-        url = window.location.protocol+'//'+window.location.host+'/'+window.location.pathname.split('/')[1];
-    }else{
+    if (window.location.host == "localhost") {
+        url = window.location.protocol + '//' + window.location.host + '/' + window.location.pathname.split('/')[1];
+    } else {
         url = "http://printcolor.antonioextremera.com";
     }
     $('.empresaTransportePedido').on('click', function () {
@@ -15,7 +15,7 @@ $(document).ready(function () {
             }
         });
         $.ajax({
-            url: url+'/admin/pedidos/setCompanyShipping',
+            url: url + '/admin/pedidos/setCompanyShipping',
             method: 'post',
             dataType: 'JSON',
             data: {
@@ -50,7 +50,7 @@ $(document).ready(function () {
                 }
             });
             $.ajax({
-                url: url+'/admin/pedidos/addNumSeguimiento',
+                url: url + '/admin/pedidos/addNumSeguimiento',
                 dataType: 'json',
                 data: {
                     idPedido: $('#addNumSeguimientoPedido').data('id'),
@@ -61,11 +61,11 @@ $(document).ready(function () {
                     if (data.status) {
                         $('#infoNumSeguimientoSuccess').removeClass('hidden');
                         $('#idNumSeguimiento').html($('#numSeguimientoPedido').val());
-                        setTimeout(function(){
+                        setTimeout(function () {
                             $('#modalNumSeguimiento').modal('hide');
                             $('#infoNumSeguimientoSuccess').addClass('hidden');
                             $('#numSeguimientoPedido').val('');
-                        },3000);
+                        }, 3000);
                     }
                 }
             });
@@ -74,14 +74,14 @@ $(document).ready(function () {
         }
     });
 
-    $('#setPaidPedido').on('click',function(){
+    $('#setPaidPedido').on('click', function () {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
         $.ajax({
-            url: url+'/admin/pedidos/setPaid',
+            url: url + '/admin/pedidos/setPaid',
             dataType: 'json',
             data: {
                 idPedido: $('#setPaidPedido').data('id'),
@@ -90,21 +90,21 @@ $(document).ready(function () {
             success: function (data) {
                 if (data.status) {
                     $('#divPedidoPaid').html('<span class="alert alert-success">' +
-                    '<span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="pagado el '+data.paid_at+'"></span>' +
-                    ' Pagado <span class="glyphicon glyphicon-ok"></span></span>');
+                        '<span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="pagado el ' + data.paid_at + '"></span>' +
+                        ' Pagado <span class="glyphicon glyphicon-ok"></span></span>');
                 }
             }
         });
     });
 
-    $('#setSentPedido').on('click',function(){
+    $('#setSentPedido').on('click', function () {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
         $.ajax({
-            url: url+'/admin/pedidos/setSent',
+            url: url + '/admin/pedidos/setSent',
             dataType: 'json',
             data: {
                 idPedido: $('#setSentPedido').data('id'),
@@ -112,14 +112,41 @@ $(document).ready(function () {
             type: 'post',
             success: function (data) {
                 if (data.status) {
-                    $('#divPedidoSent').html('<span class="alert alert-success">'+
-                        '<span class="glyphicon glyphicon-send" data-toggle="tooltip" data-placement="left"'+
-                    'title="enviado el '+data.sent_at+'"></span> Enviado <span class="glyphicon glyphicon-ok"></span></span>');
+                    $('#divPedidoSent').html('<span class="alert alert-success">' +
+                        '<span class="glyphicon glyphicon-send" data-toggle="tooltip" data-placement="left"' +
+                        'title="enviado el ' + data.sent_at + '"></span> Enviado <span class="glyphicon glyphicon-ok"></span></span>');
                     $('#SentAt').html(data.sent_at);
                 }
             }
         });
     })
+});
+
+
+$('#EditarNumSeguimientoPedido').on('click', function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        url: url + '/admin/pedidos/addNumSeguimiento',
+        dataType: 'json',
+        data: {
+            idPedido: $('#idPedido').html(),
+            numSeguimiento: $('#numSeguimientoEdit').data('numSeguimiento')
+        },
+        type: 'post',
+        success: function (data) {
+            if (data.status) {
+                $('#showInfoUpdateNumSeguimiento').removeClass('hidden');
+                setTimeout(function () {
+                    $('#modalEditarNumSeguimiento').modal('hide');
+                    $('#showInfoUpdateNumSeguimiento').addClass('hidden');
+                }, 3000);
+            }
+        }
+    });
 });
 
 function checkNumSeguimiento() {
@@ -129,3 +156,4 @@ function checkNumSeguimiento() {
         return false;
     }
 }
+

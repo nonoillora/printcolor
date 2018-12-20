@@ -19,11 +19,18 @@
         </div>
     @endif
     @if(empty($pedido->num_seguimiento))
-    <div class="col-lg-3 text-center">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#modalNumSeguimiento">
-            Número de seguimiento
-        </button>
-    </div>
+        <div class="col-lg-3 text-center">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#modalNumSeguimiento">
+                Número de seguimiento
+            </button>
+        </div>
+    @endif
+    @if($pedido->num_seguimiento!='')
+        <div class="col-lg-3 text-center">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#modalEditarNumSeguimiento">
+                Editar Número de seguimiento
+            </button>
+        </div>
     @endif
     <div class="col-lg-3 text-center" id="divPedidoPaid">
         @if($pedido->isPaid)
@@ -41,9 +48,11 @@
             <span class="glyphicon glyphicon-send" data-toggle="tooltip" data-placement="left"
                   title="enviado el {{$pedido->sent_at}}"></span> Enviado <span class="glyphicon glyphicon-ok"></span>
                 </span>
-            @else
-            <button class="btn btn-primary" id="setSentPedido" data-id="{{$pedido->idPedido}}">Enviar</button>
-            falta hacer la notificacion del correo
+        @else
+            <button class="btn btn-primary" id="setSentPedido" data-id="{{$pedido->idPedido}}" data-toggle="tooltip"
+                    data-placement="top" title="Marcar pedido enviado y notificar al
+                cliente los datos del envio">Enviar pedido*
+            </button>
         @endif
     </div>
     <div class="col-lg-12">&nbsp;</div>
@@ -129,7 +138,8 @@
                 </tr>
                 <tr>
                     <td><b>Empresa de transporte</b>: {{$empresaTransporte}}</td>
-                    <td><b>Numero de seguimiento</b>: <span id="idNumSeguimiento">{{$pedido->num_seguimiento}}</span></td>
+                    <td><b>Numero de seguimiento</b>: <span id="idNumSeguimiento">{{$pedido->num_seguimiento}}</span>
+                    </td>
                     <td><b>Metodo de pago</b>: {{$metodoPago}}</td>
                 </tr>
             </table>
@@ -162,7 +172,8 @@
                     </div>
 
                     <button type="button" class="btn btn-primary center-block"><span
-                                class="glyphicon glyphicon-ok-circle" id="addNumSeguimientoPedido" data-id="{{$pedido->idPedido}}"> Añadir</button>
+                                class="glyphicon glyphicon-ok-circle" id="addNumSeguimientoPedido"
+                                data-id="{{$pedido->idPedido}}"> Añadir</button>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -189,6 +200,39 @@
                                 data-idcompany="{{$company->idCompany}}">{{$company->name_company}}</button>
                     @endforeach
                     <span class="hidden" id="showInfoProcessShipping">
+                        <br/>
+                    <div class="alert alert-success">
+                        <span class="glyphicon glyphicon-ok-circle"></span> Se ha realizado el cambio correctamente
+                    </div>
+                        </span>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- modal editar numero de seguimiento -->
+    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"
+         id="modalEditarNumSeguimiento">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="gridSystemModalLabel">Editar número de seguimiento</h4>
+                </div>
+                <div class="modal-body center-block">
+                    <span class="hidden" id="idPedido">{{$pedido->idPedido}}</span>
+
+                    <input class="form-control" type="text" data-numSeguimiento="{{$pedido->idPedido}}"
+                           value="{{$pedido->num_seguimiento}}" id="numSeguimientoEdit">
+                    <br/>
+                    <button class="btn btn-block btn-success" id="EditarNumSeguimientoPedido">Actualizar Número de
+                        seguimiento
+                    </button>
+
+                    <span class="hidden" id="showInfoUpdateNumSeguimiento">
                         <br/>
                     <div class="alert alert-success">
                         <span class="glyphicon glyphicon-ok-circle"></span> Se ha realizado el cambio correctamente

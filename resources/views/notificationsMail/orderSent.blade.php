@@ -57,27 +57,25 @@
     </tr>
     <tr>
         <td>
-            <ol>
-                <li>Compañia de transporte:</li>
-                <li>Compañia X </li>
-                <li>Número de seguimiento:
-                    <b> num de se XXX</b>
-                </li>
-                <li>
-                    La direccion de envio es la sigueinte:
-                </li>
-                <li>Nombre</li>
-                <li>Direcion</li>
-                <li>poblacion, provicina, codigo postal</li>
-                <li>España</li>
-                            </ol>
+            <table width="100%" border="0">
+                <tr>
+                    <td>Compañia de transporte asignada: <b>{{$companyShipping->name_company}}.</b></td>
+                </tr>
+                <tr>
+                    <td>Número de seguimiento: <b>{{$pedido->num_seguimiento}}.</b></td>
+                </tr>
+                <tr>
+                    <td>Es posible que la información de seguimiento no se muestre de forma inmediata.</td>
+                </tr>
+            </table>
         </td>
     </tr>
     <tr>
         <td>
             <table width="100%" bgcolor="#e5ffd6">
                 <tr>
-                    <th bgcolor="header_table text-center" style="color:white">La dirección de envio es la sigueinte:</th>
+                    <th bgcolor="header_table text-center" style="color:white">La dirección de envio es la sigueinte:
+                    </th>
                 </tr>
                 <tr>
                     <td>
@@ -91,7 +89,7 @@
                     <td bgcolor="#e5ffd6">{{$cliente->address}}</td>
                 </tr>
                 <tr>
-                    <td bgcolor="#d3ffba">{{$cliente->poblation ,', '.$cliente->postal_code}}</td>
+                    <td bgcolor="#d3ffba">{{$cliente->poblation}}, {{$cliente->postal_code}}</td>
                 </tr>
                 <tr>
                     <td bgcolor="#e5ffd6">{{$cliente->provence}}, España</td>

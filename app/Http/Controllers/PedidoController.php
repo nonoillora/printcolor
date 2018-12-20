@@ -6,7 +6,9 @@ use App\CompanyShipping;
 use App\Factura;
 use App\LineaPedido;
 use App\Mail\newOrder;
+use App\Mail\OrderSent;
 use App\Pedido;
+use Faker\Provider\ar_JO\Company;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 use App\Cliente;
@@ -144,12 +146,12 @@ class PedidoController extends Controller
                 return view('pedidos/orderSuccessRegistered', ['title' => 'Pedido Registrado']);
             } else {
                 if ($statusP && !$statusC) {
-                    dd('fallo cliente');
-                    return view('pedidos/orderSuccessRegistered', ['title' => 'Pedido Registrado']);
+                    //dd('fallo cliente');
+                    return view('pedidos/orderSuccessRegistered', ['title' => 'falloPedido Registrado']);
                 }
                 if (!$statusP && $statusC) {
-                    dd('fallo pedido');
-                    return view('pedidos/orderSuccessRegistered', ['title' => 'Fa']);
+                    //dd('fallo pedido');
+                    return view('pedidos/orderSuccessRegistered', ['title' => 'Fallo']);
                 }
             }
     }
@@ -205,6 +207,16 @@ class PedidoController extends Controller
         $pedido->updated_at = $now;
         $pedido->sent_at = $now;
         $status = $pedido->save();
+        //need cliente, peddio $linea, $factura
+        $lineas = DB::table('linea_pedidos')
+            ->select('*')
+            ->whereIn('id', unserialize(DB::table('pedidos')->select('idLineas')->where('idPedido', $pedido->idPedido)->first()->idLineas))
+            ->get();
+        $idCompany = DB::table('company_shippings')->join('pedidos','idCompany','=','company_shipping')->select('*')->where('idPedido','=',$pedido->idPedido)->first()->idCompany;
+        $shipping = CompanyShipping::find($idCompany);
+        $idCliente = DB::table('clientes')->join('pedidos','id','=','idCliente')->select('id')->where('idPedido','=',$pedido->idPedido)->first()->id;
+        $cliente = Cliente::find($idCliente);
+        Mail::to($cliente->email)->send(new OrderSent($pedido, $cliente, $lineas,$shipping));
         return response()->json(['status' => $status, 'sent_at' => $now->toDateTimeString()]);
     }
 
