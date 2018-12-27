@@ -124,6 +124,11 @@ $(document).ready(function () {
 
 
 $('#EditarNumSeguimientoPedido').on('click', function () {
+    if (window.location.host == "localhost") {
+        url = window.location.protocol + '//' + window.location.host + '/' + window.location.pathname.split('/')[1];
+    } else {
+        url = "http://printcolor.antonioextremera.com";
+    }
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -134,12 +139,13 @@ $('#EditarNumSeguimientoPedido').on('click', function () {
         dataType: 'json',
         data: {
             idPedido: $('#idPedido').html(),
-            numSeguimiento: $('#numSeguimientoEdit').data('numSeguimiento')
+            numSeguimiento: $('#numSeguimientoEdit').val()
         },
         type: 'post',
         success: function (data) {
             if (data.status) {
                 $('#showInfoUpdateNumSeguimiento').removeClass('hidden');
+                $('#idNumSeguimiento').html($('#numSeguimientoEdit').val());
                 setTimeout(function () {
                     $('#modalEditarNumSeguimiento').modal('hide');
                     $('#showInfoUpdateNumSeguimiento').addClass('hidden');
