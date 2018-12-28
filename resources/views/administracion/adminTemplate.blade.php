@@ -27,7 +27,7 @@
                 <a href="{!! url('/') !!}"><img src="{{asset('storage/app/public/logo.png')}}"
                                                 class="img-responsive center-block"/></a>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 text-center">
+            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 text-center hidden">
                 <h3>Impresi&oacute;n r&aacute;pida<br/>
                     y<br/>
                     Segura</h3>
