@@ -72,8 +72,10 @@
 
         <p><b>IVA (21%): {{Cart::tax()}}€</b></p>
 
-        <p><b>IMPORTE TOTAL: {{Cart::total()}}€ (IVA incluido)</b></p>
-        {!! Form::hidden('totalPedido',Cart::total(),['id'=>'priceTotalOrder']) !!}
+        <p><b>Gastos de envio: 5 €</b></p>
+
+        <p><b>IMPORTE TOTAL: {{Cart::total()+5}}€ (IVA incluido)</b></p>
+        {!! Form::hidden('totalPedido',(Cart::total()+5),['id'=>'priceTotalOrder']) !!}
         {!! Form::hidden('isPaidOrder',0,['id'=>'isPaidOrder']) !!}
 
         <br/>

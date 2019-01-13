@@ -83,7 +83,7 @@
             <div class="col-sm-6">
                 <div class="total_area">
                     <ul>
-                        <li>Gastos de gesti&oacute;n <span>Gratuitos</span></li>
+                        <li>Gastos de gesti&oacute;n <span>5 &euro;</span></li>
                         <li>Total <span>{{Cart::subtotal()}}&euro;</span></li>
                     </ul>
                     <a class="btn btn-warning" href="{{url('clearCart')}}"><span
